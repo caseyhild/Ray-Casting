@@ -3,10 +3,16 @@ public class Tree
 {
     public Tree(PrintWriter outFile)
     {
+        this(outFile, 0, 0, 0);
+    }
+
+    public Tree(PrintWriter outFile, double xCenter, double yCenter, double zCenter)
+    {
+        // tree
         int num = 10;
-        double x = 0;
-        double y = 0;
-        double z = 1 - 0.75/num;
+        double x = xCenter;
+        double y = yCenter;
+        double z  = zCenter + 1 - 0.75/num;
         double dx;
         double dy;
         for(int i = 0; i < 2 * num; i++)
@@ -22,9 +28,9 @@ public class Tree
         }
         for(int deg = 0; deg < 360; deg += 10)
         {
-            x = 0;
-            y = 0;
-            z = 1;
+            x = xCenter;
+            y = yCenter;
+            z = zCenter + 1;
             dx = 0.5 * Math.cos(Math.toRadians(deg));
             dy = 0.5 * Math.sin(Math.toRadians(deg));
             for(int i = 0; i < num; i++)
