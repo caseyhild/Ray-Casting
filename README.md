@@ -1,4 +1,6 @@
-A collection of tests in worlds made using the ray casting technique.
+# Ray Casting
+
+A collection of tests I have done in worlds made using the ray casting technique.
 
 <img width="410" alt="Screenshot 2025-09-14 at 7 11 36 PM" src="https://github.com/user-attachments/assets/0e365ffb-4785-40de-8ef2-f33dfa213d62" />
 <img width="410" alt="Screenshot 2025-09-14 at 7 13 28 PM" src="https://github.com/user-attachments/assets/a154e8c5-19e6-4734-bc93-2698ff4c79d4" />
