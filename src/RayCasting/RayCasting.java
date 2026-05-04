@@ -34,17 +34,17 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -84,7 +84,7 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
         //set starting frame
         frame = 0;
         //Create 3D Points files only if they don't already exist
-        folder = new File("3DPoints");
+        folder = new File("../3DPoints");
         if(!new File(folder, "tree.txt").exists() || !new File(folder, "spiral.txt").exists())
         {
             File[] filelist = folder.listFiles();
@@ -92,7 +92,7 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
                 filelist = new File[0];
             for (File file : filelist)
                 file.delete();
-            new CreatePoints("3DPoints");
+            new CreatePoints("../3DPoints");
         }
         files = new ArrayList<>();
         readFile("tree.txt");
@@ -135,9 +135,22 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
         //list of the available textures to use
         textures = new ArrayList<>();
         textures.add(Texture.bricks);
+        textures.add(Texture.xor);
         textures.add(Texture.gray);
         textures.add(Texture.grass);
         textures.add(Texture.black);
+
+        textures.add(Texture.gravel);
+        textures.add(Texture.coolpattern);
+        textures.add(Texture.fractal);
+        textures.add(Texture.tiles);
+        textures.add(Texture.waves);
+        textures.add(Texture.flag);
+        textures.add(Texture.dog);
+        textures.add(Texture.map);
+        textures.add(Texture.wave);
+        textures.add(Texture.circles);
+        textures.add(Texture.collisions);
         //starting floor, ceiling, and finish location
         for(int mapX = 0; mapX < mapWidth; mapX++)
         {
@@ -146,14 +159,14 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
                 if(mapX >= mapWidth /3 && mapX < 2 * mapWidth /3 && mapY >= mapHeight /3 && mapY < 2 * mapHeight /3)
                 {
                     floorMap[mapX][mapY] = 2;
-                    ceilingMap[mapX][mapY] = 2;
+                    ceilingMap[mapX][mapY] = 3;
                 }
                 else
                 {
-                    floorMap[mapX][mapY] = 3;
-                    ceilingMap[mapX][mapY] = 4;
+                    floorMap[mapX][mapY] = 4;
+                    ceilingMap[mapX][mapY] = 5;
                     if(mapX == 0 || mapX == map.length - 1 || mapY == 0 || mapY == map.length - 1) {
-                        map[mapX][mapY] = 4;
+                        map[mapX][mapY] = 5;
                     }
                 }
             }
@@ -273,9 +286,9 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
             {
                 //updates game
                 //updating textures
-                ArrayList<Texture> texturesCopy = new ArrayList<>(textures);
-                textures.clear();
-                textures.addAll(texturesCopy);
+                Texture.circles.update(frame);
+                Texture.collisions.update(frame);
+                Texture.wave.update(frame);
                 //updating camera
                 camera.update(map);
                 //updating screen
