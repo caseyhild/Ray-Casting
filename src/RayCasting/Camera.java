@@ -14,8 +14,19 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
     public int timer;
     public int mouseX;
     public int mouseY;
+    public int mouseDeltaY;
+    private int prevMouseY;
+    public int mouseDeltaX;
+    private int prevMouseX;
+    private final int winWidth;
+    private final int winHeight;
+    private int skipMoveEvents;
+    private Robot robot;
+    private int warpTargetX;
+    private int warpTargetY;
+    private Runnable cursorHider;
 
-    public Camera(double x, double y, double xd, double yd, double xp, double yp) 
+    public Camera(double x, double y, double xd, double yd, double xp, double yp, int width, int height)
     {   
         //gets starting location and direction
         xPos = x;
@@ -32,20 +43,39 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
         turnRight = 0;
         shoot = false;
         timer = 0;
-        mouseX = 320;
-        mouseY = 240;
-
-        //setting mouse position to center of screen
-        try
-        {
-            Robot r = new Robot();
-            r.mouseMove(Toolkit.getDefaultToolkit().getScreenSize().width/2, Toolkit.getDefaultToolkit().getScreenSize().height/2 - 25);
-        }
-        catch(AWTException ignored)
-        {
-
-        }
+        winWidth = width;
+        winHeight = height;
+        mouseX = winWidth / 2;
+        mouseY = winHeight / 2;
+        mouseDeltaY = 0;
+        prevMouseY = winHeight / 2;
+        mouseDeltaX = 0;
+        prevMouseX = winWidth / 2;
+        skipMoveEvents = 0;
+        try { robot = new Robot(); } catch (AWTException ignored) { robot = null; }
+        warpTargetX = Toolkit.getDefaultToolkit().getScreenSize().width / 2;
+        warpTargetY = Toolkit.getDefaultToolkit().getScreenSize().height / 2;
     }
+    public void warpCenter()
+    {
+        mouseX = winWidth / 2;
+        mouseY = winHeight / 2;
+        prevMouseX = winWidth / 2;
+        prevMouseY = winHeight / 2;
+        skipMoveEvents = 2;
+    }
+
+    public void setWarpTarget(int screenX, int screenY)
+    {
+        warpTargetX = screenX;
+        warpTargetY = screenY;
+    }
+
+    public void setCursorHider(Runnable r)
+    {
+        cursorHider = r;
+    }
+
     //checks if key is pressed
     public void keyPressed(KeyEvent key)
     {
@@ -93,12 +123,20 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
 
     public void mouseEntered(MouseEvent me)
     {
-
+        prevMouseX = me.getX();
+        prevMouseY = me.getY();
+        if (cursorHider != null) cursorHider.run();
     }
 
     public void mouseExited(MouseEvent me)
     {
-
+        if (robot != null) {
+            robot.mouseMove(warpTargetX, warpTargetY);
+            mouseX = winWidth / 2;
+            prevMouseX = winWidth / 2;
+            prevMouseY = winHeight / 2;
+            skipMoveEvents = 2;
+        }
     }
 
     public void mousePressed(MouseEvent me)
@@ -114,12 +152,30 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
     {
         mouseX = me.getX();
         mouseY = me.getY();
+        if (skipMoveEvents > 0)
+            skipMoveEvents--;
+        else
+        {
+            mouseDeltaX += mouseX - prevMouseX;
+            mouseDeltaY += mouseY - prevMouseY;
+        }
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
     }
 
     public void mouseMoved(MouseEvent me)
     {
         mouseX = me.getX();
         mouseY = me.getY();
+        if (skipMoveEvents > 0)
+            skipMoveEvents--;
+        else
+        {
+            mouseDeltaX += mouseX - prevMouseX;
+            mouseDeltaY += mouseY - prevMouseY;
+        }
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
     }
 
     public void update(int[][] map)
@@ -194,19 +250,21 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
             }
         }
 
-        //setting mouse position to center of screen
-        if (timer++ % 5 == 0) {
-            try {
-                Robot r = new Robot();
-                r.mouseMove(Toolkit.getDefaultToolkit().getScreenSize().width / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - 25);
-            } catch (AWTException ignored) {
-
+        //warp cursor back to center when near the edge
+        if (mouseX < winWidth / 8 || mouseX > winWidth * 7 / 8 || mouseY < winHeight / 8 || mouseY > winHeight * 7 / 8) {
+            if (robot != null) {
+                robot.mouseMove(warpTargetX, warpTargetY);
+                mouseX = winWidth / 2;
+                prevMouseX = winWidth / 2;
+                prevMouseY = winHeight / 2;
+                skipMoveEvents = 2;
             }
         }
 
         //turning using the mouse
         {
-            double rotationAmount = 0.002 * (320 - mouseX);
+            double rotationAmount = -0.002 * mouseDeltaX;
+            mouseDeltaX = 0;
             double oldxDir = xDir;
             xDir = xDir * Math.cos(rotationAmount) - yDir * Math.sin(rotationAmount);
             yDir = oldxDir * Math.sin(rotationAmount) + yDir * Math.cos(rotationAmount);

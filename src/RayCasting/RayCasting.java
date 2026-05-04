@@ -1,10 +1,10 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
+import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import java.io.*;
-public class RayCastingMoreTests extends JFrame implements Runnable, KeyListener
+public class RayCasting extends JFrame implements Runnable, KeyListener
 {
     private final int width;
     private final int height;
@@ -13,6 +13,8 @@ public class RayCastingMoreTests extends JFrame implements Runnable, KeyListener
     private boolean running;
     private final BufferedImage image;
     private final int[] pixels;
+    private JPanel gamePanel;
+    private Cursor blankCursor;
     private static final int[][] map =
         {
             {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -74,22 +76,24 @@ public class RayCastingMoreTests extends JFrame implements Runnable, KeyListener
     private KeyEvent key;
     private KeyEvent oldKey;
 
-    public RayCastingMoreTests() throws IOException
+    public RayCasting() throws IOException
     {
         //set size of screen
-        width = 640;
-        height = 480;
+        width = 800;
+        height = 600;
         //set starting frame
         frame = 0;
-        //delete all existing files
-        folder = new File("Ray Casting More Tests/3DPoints");
-        File[] filelist = folder.listFiles();
-        if(filelist == null)
-            filelist = new File[0];
-        for (File file : filelist)
-            file.delete();
-        //Create 3D Points files
-        new CreatePoints("Ray Casting More Tests/3DPoints");
+        //Create 3D Points files only if they don't already exist
+        folder = new File("3DPoints");
+        if(!new File(folder, "tree.txt").exists() || !new File(folder, "spiral.txt").exists())
+        {
+            File[] filelist = folder.listFiles();
+            if(filelist == null)
+                filelist = new File[0];
+            for (File file : filelist)
+                file.delete();
+            new CreatePoints("3DPoints");
+        }
         files = new ArrayList<>();
         readFile("tree.txt");
         readFile("spiral.txt");
@@ -121,7 +125,7 @@ public class RayCastingMoreTests extends JFrame implements Runnable, KeyListener
         }
         points.get(1).add(new Vector3D(mapWidth /2.0 + 2, mapHeight /2.0, 0.5));
         //initial map and location
-        camera = new Camera(mapWidth/2 + 0.5, mapHeight/2 + 0.5, 1, 0, 0, -0.66);//coordinates from topleft of map, facing down
+        camera = new Camera(mapWidth/2 + 0.5, mapHeight/2 + 0.5, 1, 0, 0, -0.66, width, height);//coordinates from topleft of map, facing down
         floorMap = new int[mapWidth][mapHeight];
         ceilingMap = new int[mapWidth][mapHeight];
         //what will be displayed to the user and each pixel of that image
@@ -156,21 +160,75 @@ public class RayCastingMoreTests extends JFrame implements Runnable, KeyListener
         }
         //keyboard input
         addKeyListener(camera);
-        //mouse input
-        addMouseListener(camera);
-        addMouseMotionListener(camera);
+        //mouse input will be added to gamePanel after it's created
         //send info to screen class to be drawn
         screen = new Screen(map, floorMap, ceilingMap, mapWidth, mapHeight, textures, files, width, height);
         screen.setPoints(points);
         screen.updateGame(camera, pixels, map, floorMap, ceilingMap, frame);
         //setting up the window
-        setSize(width, height);
         setResizable(false);
-        setTitle("Ray Casting More Tests");
+        setTitle("Ray Casting");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBackground(Color.gray);
+        //hide the cursor using glass pane (most reliable on macOS)
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Image cursorImage = toolkit.createImage(new byte[0]);
+        blankCursor = toolkit.createCustomCursor(cursorImage, new Point(0, 0), "hidden");
+        JPanel glassPane = (JPanel) getGlassPane();
+        glassPane.setVisible(true);
+        glassPane.setCursor(blankCursor);
+        setCursor(blankCursor);
+        getContentPane().setCursor(blankCursor);
+        //reapply on every mouse movement (macOS-proof)
+        glassPane.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override public void mouseMoved(java.awt.event.MouseEvent e) { setCursor(blankCursor); }
+            @Override public void mouseDragged(java.awt.event.MouseEvent e) { setCursor(blankCursor); }
+        });
+        glassPane.addMouseListener(camera);
+        glassPane.addMouseMotionListener(camera);
+        camera.setCursorHider(() -> {
+            setCursor(blankCursor);
+            getContentPane().setCursor(blankCursor);
+            glassPane.setCursor(blankCursor);
+        });
+        //create panel for rendering
+        gamePanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(image, 0, 0, width, height, null);
+            }
+        };
+        gamePanel.setPreferredSize(new Dimension(width, height));
+        gamePanel.setCursor(blankCursor);
+        setCursor(blankCursor);
+        gamePanel.addMouseListener(camera);
+        gamePanel.addMouseMotionListener(camera);
+        setContentPane(gamePanel);
+        getContentPane().setCursor(blankCursor);
+        pack();
         setLocationRelativeTo(null);
+        //warp cursor off screen before showing window so it's never visible
+        try {
+            Robot r = new Robot();
+            r.mouseMove(-100, -100);
+        } catch (AWTException ignored) {}
         setVisible(true);
+        //set warp target, then warp to center after a short delay
+        //so the glass pane cursor is fully applied before the cursor enters the window
+        try {
+            Point loc = getLocationOnScreen();
+            camera.setWarpTarget(loc.x + width / 2, loc.y + height / 2);
+            camera.warpCenter();
+            final int tx = loc.x + width / 2;
+            final int ty = loc.y + height / 2;
+            new Thread(() -> {
+                try {
+                    Thread.sleep(300);
+                    new Robot().mouseMove(tx, ty);
+                } catch (Exception ignored) {}
+            }).start();
+        } catch (Exception ignored) {}
         start();
     }
 
@@ -187,20 +245,13 @@ public class RayCastingMoreTests extends JFrame implements Runnable, KeyListener
         BufferStrategy bs = getBufferStrategy();
         if(bs == null)
         {
-            createBufferStrategy(3);
+            createBufferStrategy(2);
             return;
         }
         Graphics g = bs.getDrawGraphics();
-        g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
-        g.setColor(new Color(0, 0, 0));
-        g.fillRect(width/2 - 2, height/2 - 11, 4, 8);
-        g.fillRect(width/2 - 2, height/2 + 3, 4, 8);
-        g.fillRect(width/2 - 11, height/2 - 2, 8, 4);
-        g.fillRect(width/2 + 3, height/2 - 2, 8, 4);
-        if(keyReleased)
-            keyReleased = false;
-        if(keyTyped)
-            keyTyped = false;
+        Insets insets = getInsets();
+        g.drawImage(image, insets.left, insets.top, image.getWidth(), image.getHeight(), null);
+        g.dispose();
         bs.show();
     }
 
@@ -234,16 +285,11 @@ public class RayCastingMoreTests extends JFrame implements Runnable, KeyListener
             try
             {
                 // Hide the cursor
-                BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-                Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-                        cursorImg, new Point(0, 0), "blank cursor");
                 this.getContentPane().setCursor(blankCursor);
-
                 render();//displays to the screen unrestricted time
             }
             catch(IOException ignored)
             {
-
             }
         }
     }
@@ -350,6 +396,6 @@ public class RayCastingMoreTests extends JFrame implements Runnable, KeyListener
 
     public static void main(String[] args) throws IOException
     {
-        new RayCastingMoreTests();
+        new RayCasting();
     }
 }

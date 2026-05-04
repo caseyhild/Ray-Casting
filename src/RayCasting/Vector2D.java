@@ -1,8 +1,9 @@
-public class Vector
+public class Vector2D
 {
-    private double x;
-    private double y;
-    public Vector(double x, double y)
+    public double x;
+    public double y;
+
+    public Vector2D(double x, double y)
     {
         this.x = x;
         this.y = y;
@@ -17,7 +18,7 @@ public class Vector
     {
         return y;
     }
-    
+
     public void setX(double x)
     {
         this.x = x;
@@ -28,39 +29,43 @@ public class Vector
         this.y = y;
     }
 
-    public static Vector sub(Vector v1, Vector v2)
+    public void add(Vector2D v)
     {
-        Vector v = new Vector(0, 0);
-        v.x = v1.x - v2.x;
-        v.y = v1.y - v2.y;
-        return v;
+        x += v.x;
+        y += v.y;
+    }
+
+    public void sub(Vector2D v)
+    {
+        x -= v.x;
+        y -= v.y;
     }
 
     public void mult(double n)
     {
-        this.x *= n;
-        this.y *= n;
+        x *= n;
+        y *= n;
     }
 
     public void div(double n)
     {
-        this.x /= n;
-        this.y /= n;
+        x /= n;
+        y /= n;
     }
 
     public double mag()
     {
-        return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+        return Math.sqrt(x * x + y * y);
     }
 
     public void normalize()
     {
         if(mag() > 0)
-            this.div(this.mag());
+            div(mag());
     }
 
     public String toString()
     {
-        return x + " , " + y;
+        return x + " " + y;
     }
 }
