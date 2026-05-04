@@ -84,7 +84,7 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
         //set starting frame
         frame = 0;
         //Create 3D Points files only if they don't already exist
-        folder = new File("../3DPoints");
+        folder = new File("../../resources/3DPoints");
         if(!new File(folder, "tree.txt").exists() || !new File(folder, "spiral.txt").exists())
         {
             File[] filelist = folder.listFiles();
@@ -92,7 +92,7 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
                 filelist = new File[0];
             for (File file : filelist)
                 file.delete();
-            new CreatePoints("../3DPoints");
+            new CreatePoints("../../resources/3DPoints");
         }
         files = new ArrayList<>();
         readFile("tree.txt");

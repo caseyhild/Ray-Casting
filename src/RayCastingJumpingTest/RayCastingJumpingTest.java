@@ -47,7 +47,7 @@ public class RayCastingJumpingTest extends JFrame implements Runnable
         };
     private final int[][] floorMap;
     private final int[][] ceilingMap;
-    private Vector player = new Vector(1.5, 1.5);
+    private Vector2D player = new Vector2D(1.5, 1.5);
     private final Camera camera;
     private final Screen screen;
 
@@ -59,7 +59,7 @@ public class RayCastingJumpingTest extends JFrame implements Runnable
         int mapHeight = map[0].length;
         floorMap = new int[mapWidth][mapHeight];
         ceilingMap = new int[mapWidth][mapHeight];
-        player = new Vector(1.5, 1.5);
+        player = new Vector2D(1.5, 1.5);
         //what will be displayed to the user and each pixel of that image
         thread = new Thread(this);
         int width = 640;
@@ -130,7 +130,7 @@ public class RayCastingJumpingTest extends JFrame implements Runnable
             lastTime = now;
             while(delta >= 1)//Make sure update is only happening 60 times a second
             {
-                player = new Vector(camera.xPos, camera.yPos);
+                player = new Vector2D(camera.xPos, camera.yPos);
                 //updates screen and camera
                 camera.update(map, map2);
                 double playerHeight = camera.playerHeight;

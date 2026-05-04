@@ -428,7 +428,7 @@ public class Texture {
     // ===== FILE LOADER =====
     private void loadFromFile(String name) {
         try {
-            Scanner in = new Scanner(new File("../SavedTextures/" + name + ".txt"));
+            Scanner in = new Scanner(new File("../../resources/SavedTextures/" + name + ".txt"));
             for (int i = 0; i < pixels.length; i++) {
                 pixels[i] = in.nextInt();
             }

@@ -13,9 +13,9 @@ public class Camera implements KeyListener
     private final double turnLeft;
     private final double turnRight;
     private int turns = 0;
-    public Vector ball;
-    public Vector ballDir;
-    public Vector startBall;
+    public Vector2D ball;
+    public Vector2D ballDir;
+    public Vector2D startBall;
     public boolean shoot;
     private int[][] map2;
     public Camera(double x, double y, double xd, double yd, double xp, double yp, boolean jump) 
@@ -30,9 +30,9 @@ public class Camera implements KeyListener
         turnLeft = 0;
         turnRight = 0;
         allowJump = jump;
-        ball = new Vector(x, y);
-        ballDir = new Vector(xd, yd);
-        startBall = new Vector(x, y);
+        ball = new Vector2D(x, y);
+        ballDir = new Vector2D(xd, yd);
+        startBall = new Vector2D(x, y);
         shoot = false;
     }
 
