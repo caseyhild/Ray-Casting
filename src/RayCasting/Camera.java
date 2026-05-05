@@ -3,10 +3,19 @@ import java.awt.event.*;
 public class Camera implements MouseListener, MouseMotionListener, KeyListener
 {
     public double xPos, yPos, xDir, yDir, xPlane, yPlane;
+    public double playerHeight = 0.5;
     private boolean left;
     private boolean right;
     private boolean forward;
     private boolean back;
+    // jumping
+    private boolean jump;
+    private boolean up = false;
+    private final double jumpAcceleration = -0.005;
+    private final double jumpHeight = 1.0;
+    private double jumpSpeed = Math.sqrt(-2 * jumpAcceleration * jumpHeight);
+    private boolean jumpHit = false;
+    private int[][] map2;
     private final double turnLeft;
     private final double turnRight;
     private int turns;
@@ -94,6 +103,19 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
         //D to move right
         if((key.getKeyCode() == KeyEvent.VK_D))
             right = true;
+        //Space to jump
+        if((key.getKeyCode() == KeyEvent.VK_SPACE) && playerHeight == 0.5 && map2 != null && map2[(int) xPos][(int) yPos] == 0)
+        {
+            jump = true;
+            up = true;
+            jumpHit = false;
+        }
+        else if((key.getKeyCode() == KeyEvent.VK_SPACE) && playerHeight == 0.5)
+        {
+            jump = true;
+            up = true;
+            jumpHit = true;
+        }
     }
     //checks if key is released
     public void keyReleased(KeyEvent key)
@@ -180,73 +202,121 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
 
     public void update(int[][] map)
     {
+        update(map, null);
+    }
+
+    public void update(int[][] map, int[][] map2)
+    {
+        this.map2 = map2;
         //moves and turns player based on key input
         double MOVE_SPEED = .08;
+        int nonSolid = 0;
         if(forward)
         {
-            if(!((int) (xPos + xDir * MOVE_SPEED) < 0 || (int) (xPos + xDir * MOVE_SPEED) > map.length - 1 || (int) (yPos + yDir * MOVE_SPEED) < 0 || (int) (yPos + yDir * MOVE_SPEED) > map[0].length - 1))
+            if(playerHeight <= 1 || map2 == null)
             {
-                xPos += xDir * MOVE_SPEED;
-                if(xDir > 0 && map[(int) (xPos + 0.01)][(int) yPos] != 0)
-                    xPos = Math.round(xPos) - 0.01;
-                else if(xDir < 0 && map[(int) (xPos - 0.01)][(int) yPos] != 0)
-                    xPos = Math.round(xPos) + 0.01;
-                yPos += yDir * MOVE_SPEED;
-                if(yDir > 0 && map[(int) xPos][(int) (yPos + 0.01)] != 0)
-                    yPos = Math.round(yPos) - 0.01;
-                else if(yDir < 0 && map[(int) xPos][(int) (yPos - 0.01)] != 0)
-                    yPos = Math.round(yPos) + 0.01;
+                if(!((int) (xPos + xDir * MOVE_SPEED) < 0 || (int) (xPos + xDir * MOVE_SPEED) > map.length - 1 || (int) (yPos + yDir * MOVE_SPEED) < 0 || (int) (yPos + yDir * MOVE_SPEED) > map[0].length - 1))
+                {
+                    xPos += xDir * MOVE_SPEED;
+                    if(xDir > 0 && map[(int) (xPos + 0.01)][(int) yPos] != 0)
+                        xPos = Math.round(xPos) - 0.01;
+                    else if(xDir < 0 && map[(int) (xPos - 0.01)][(int) yPos] != 0)
+                        xPos = Math.round(xPos) + 0.01;
+                    yPos += yDir * MOVE_SPEED;
+                    if(yDir > 0 && map[(int) xPos][(int) (yPos + 0.01)] != 0)
+                        yPos = Math.round(yPos) - 0.01;
+                    else if(yDir < 0 && map[(int) xPos][(int) (yPos - 0.01)] != 0)
+                        yPos = Math.round(yPos) + 0.01;
+                }
+            }
+            else
+            {
+                // above first floor - must also check map2
+                if((map[(int)(xPos + xDir * MOVE_SPEED)][(int)yPos] == 0 || map[(int)(xPos + xDir * MOVE_SPEED)][(int)yPos] == nonSolid) && (map2[(int)(xPos + xDir * MOVE_SPEED)][(int)yPos] == 0 || map2[(int)(xPos + xDir * MOVE_SPEED)][(int)yPos] == nonSolid))
+                    xPos += xDir * MOVE_SPEED;
+                if((map[(int)xPos][(int)(yPos + yDir * MOVE_SPEED)] == 0 || map[(int)xPos][(int)(yPos + yDir * MOVE_SPEED)] == nonSolid) && (map2[(int)xPos][(int)(yPos + yDir * MOVE_SPEED)] == 0 || map2[(int)xPos][(int)(yPos + yDir * MOVE_SPEED)] == nonSolid))
+                    yPos += yDir * MOVE_SPEED;
             }
         }
         
         if(back)
         {
-            if(!((int) (xPos - xDir * MOVE_SPEED) < 0 || (int) (xPos - xDir * MOVE_SPEED) > map.length - 1 || (int) (yPos - yDir * MOVE_SPEED) < 0 || (int) (yPos - yDir * MOVE_SPEED) > map[0].length - 1))
+            if(playerHeight <= 1 || map2 == null)
             {
-                xPos -= xDir * MOVE_SPEED;
-                if(xDir > 0 && map[(int) (xPos - 0.01)][(int) yPos] != 0)
-                    xPos = Math.round(xPos) + 0.01;
-                else if(xDir < 0 && map[(int) (xPos + 0.01)][(int) yPos] != 0)
-                    xPos = Math.round(xPos) - 0.01;
-                yPos -= yDir * MOVE_SPEED;
-                if(yDir > 0 && map[(int) xPos][(int) (yPos - 0.01)] != 0)
-                    yPos = Math.round(yPos) + 0.01;
-                else if(yDir < 0 && map[(int) xPos][(int) (yPos + 0.01)] != 0)
-                    yPos = Math.round(yPos) - 0.01;
+                if(!((int) (xPos - xDir * MOVE_SPEED) < 0 || (int) (xPos - xDir * MOVE_SPEED) > map.length - 1 || (int) (yPos - yDir * MOVE_SPEED) < 0 || (int) (yPos - yDir * MOVE_SPEED) > map[0].length - 1))
+                {
+                    xPos -= xDir * MOVE_SPEED;
+                    if(xDir > 0 && map[(int) (xPos - 0.01)][(int) yPos] != 0)
+                        xPos = Math.round(xPos) + 0.01;
+                    else if(xDir < 0 && map[(int) (xPos + 0.01)][(int) yPos] != 0)
+                        xPos = Math.round(xPos) - 0.01;
+                    yPos -= yDir * MOVE_SPEED;
+                    if(yDir > 0 && map[(int) xPos][(int) (yPos - 0.01)] != 0)
+                        yPos = Math.round(yPos) + 0.01;
+                    else if(yDir < 0 && map[(int) xPos][(int) (yPos + 0.01)] != 0)
+                        yPos = Math.round(yPos) - 0.01;
+                }
+            }
+            else
+            {
+                if((map[(int)(xPos - xDir * MOVE_SPEED)][(int)yPos] == 0 || map[(int)(xPos - xDir * MOVE_SPEED)][(int)yPos] == nonSolid) && (map2[(int)(xPos - xDir * MOVE_SPEED)][(int)yPos] == 0 || map2[(int)(xPos - xDir * MOVE_SPEED)][(int)yPos] == nonSolid))
+                    xPos -= xDir * MOVE_SPEED;
+                if((map[(int)xPos][(int)(yPos - yDir * MOVE_SPEED)] == 0 || map[(int)xPos][(int)(yPos - yDir * MOVE_SPEED)] == nonSolid) && (map2[(int)xPos][(int)(yPos - yDir * MOVE_SPEED)] == 0 || map2[(int)xPos][(int)(yPos - yDir * MOVE_SPEED)] == nonSolid))
+                    yPos -= yDir * MOVE_SPEED;
             }
         }
 
         if(left)
         {
-            if(!((int) (xPos - yDir * MOVE_SPEED) < 0 || (int) (xPos - yDir * MOVE_SPEED) > map.length - 1 || (int) (yPos + xDir * MOVE_SPEED) < 0 || (int) (yPos + xDir * MOVE_SPEED) > map[0].length - 1))
+            if(playerHeight <= 1 || map2 == null)
             {
-                xPos -= yDir * MOVE_SPEED;
-                if(yDir > 0 && map[(int) (xPos - 0.01)][(int) yPos] != 0)
-                    xPos = Math.round(xPos) + 0.01;
-                else if(yDir < 0 && map[(int) (xPos + 0.01)][(int) yPos] != 0)
-                    xPos = Math.round(xPos) - 0.01;
-                yPos += xDir * MOVE_SPEED;
-                if(xDir > 0 && map[(int) xPos][(int) (yPos + 0.01)] != 0)
-                    yPos = Math.round(yPos) - 0.01;
-                else if(xDir < 0 && map[(int) xPos][(int) (yPos - 0.01)] != 0)
-                    yPos = Math.round(yPos) + 0.01;
+                if(!((int) (xPos - yDir * MOVE_SPEED) < 0 || (int) (xPos - yDir * MOVE_SPEED) > map.length - 1 || (int) (yPos + xDir * MOVE_SPEED) < 0 || (int) (yPos + xDir * MOVE_SPEED) > map[0].length - 1))
+                {
+                    xPos -= yDir * MOVE_SPEED;
+                    if(yDir > 0 && map[(int) (xPos - 0.01)][(int) yPos] != 0)
+                        xPos = Math.round(xPos) + 0.01;
+                    else if(yDir < 0 && map[(int) (xPos + 0.01)][(int) yPos] != 0)
+                        xPos = Math.round(xPos) - 0.01;
+                    yPos += xDir * MOVE_SPEED;
+                    if(xDir > 0 && map[(int) xPos][(int) (yPos + 0.01)] != 0)
+                        yPos = Math.round(yPos) - 0.01;
+                    else if(xDir < 0 && map[(int) xPos][(int) (yPos - 0.01)] != 0)
+                        yPos = Math.round(yPos) + 0.01;
+                }
+            }
+            else
+            {
+                if((map[(int)(xPos - yDir * MOVE_SPEED)][(int)yPos] == 0 || map[(int)(xPos - yDir * MOVE_SPEED)][(int)yPos] == nonSolid) && (map2[(int)(xPos - yDir * MOVE_SPEED)][(int)yPos] == 0 || map2[(int)(xPos - yDir * MOVE_SPEED)][(int)yPos] == nonSolid))
+                    xPos -= yDir * MOVE_SPEED;
+                if((map[(int)xPos][(int)(yPos + xDir * MOVE_SPEED)] == 0 || map[(int)xPos][(int)(yPos + xDir * MOVE_SPEED)] == nonSolid) && (map2[(int)xPos][(int)(yPos + xDir * MOVE_SPEED)] == 0 || map2[(int)xPos][(int)(yPos + xDir * MOVE_SPEED)] == nonSolid))
+                    yPos += xDir * MOVE_SPEED;
             }
         }
 
         if(right)
         {
-            if(!((int) (xPos + yDir * MOVE_SPEED) < 0 || (int) (xPos + yDir * MOVE_SPEED) > map.length - 1 || (int) (yPos - xDir * MOVE_SPEED) < 0 || (int) (yPos - xDir * MOVE_SPEED) > map[0].length - 1))
+            if(playerHeight <= 1 || map2 == null)
             {
-                xPos += yDir * MOVE_SPEED;
-                if(yDir > 0 && map[(int) (xPos + 0.01)][(int) yPos] != 0)
-                    xPos = Math.round(xPos) - 0.01;
-                else if(yDir < 0 && map[(int) (xPos - 0.01)][(int) yPos] != 0)
-                    xPos = Math.round(xPos) + 0.01;
-                yPos -= xDir * MOVE_SPEED;
-                if(xDir > 0 && map[(int) xPos][(int) (yPos - 0.01)] != 0)
-                    yPos = Math.round(yPos) + 0.01;
-                else if(xDir < 0 && map[(int) xPos][(int) (yPos + 0.01)] != 0)
-                    yPos = Math.round(yPos) - 0.01;
+                if(!((int) (xPos + yDir * MOVE_SPEED) < 0 || (int) (xPos + yDir * MOVE_SPEED) > map.length - 1 || (int) (yPos - xDir * MOVE_SPEED) < 0 || (int) (yPos - xDir * MOVE_SPEED) > map[0].length - 1))
+                {
+                    xPos += yDir * MOVE_SPEED;
+                    if(yDir > 0 && map[(int) (xPos + 0.01)][(int) yPos] != 0)
+                        xPos = Math.round(xPos) - 0.01;
+                    else if(yDir < 0 && map[(int) (xPos - 0.01)][(int) yPos] != 0)
+                        xPos = Math.round(xPos) + 0.01;
+                    yPos -= xDir * MOVE_SPEED;
+                    if(xDir > 0 && map[(int) xPos][(int) (yPos - 0.01)] != 0)
+                        yPos = Math.round(yPos) + 0.01;
+                    else if(xDir < 0 && map[(int) xPos][(int) (yPos + 0.01)] != 0)
+                        yPos = Math.round(yPos) - 0.01;
+                }
+            }
+            else
+            {
+                if((map[(int)(xPos + yDir * MOVE_SPEED)][(int)yPos] == 0 || map[(int)(xPos + yDir * MOVE_SPEED)][(int)yPos] == nonSolid) && (map2[(int)(xPos + yDir * MOVE_SPEED)][(int)yPos] == 0 || map2[(int)(xPos + yDir * MOVE_SPEED)][(int)yPos] == nonSolid))
+                    xPos += yDir * MOVE_SPEED;
+                if((map[(int)xPos][(int)(yPos - xDir * MOVE_SPEED)] == 0 || map[(int)xPos][(int)(yPos - xDir * MOVE_SPEED)] == nonSolid) && (map2[(int)xPos][(int)(yPos - xDir * MOVE_SPEED)] == 0 || map2[(int)xPos][(int)(yPos - xDir * MOVE_SPEED)] == nonSolid))
+                    yPos -= xDir * MOVE_SPEED;
             }
         }
 
@@ -295,6 +365,28 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
             xPlane = xPlane * Math.cos(-turnRight) - yPlane * Math.sin(-turnRight);
             yPlane = oldxPlane * Math.sin(-turnRight) + yPlane * Math.cos(-turnRight);
             turns = 1;
+        }
+
+        // jumping physics
+        if(jump)
+        {
+            if(playerHeight > 0.5 || up)
+            {
+                playerHeight += jumpSpeed;
+                jumpSpeed += jumpAcceleration;
+                up = false;
+                if(jumpHit && playerHeight >= 0.8)
+                {
+                    jumpSpeed *= -0.05;
+                    jumpHit = false;
+                }
+            }
+            else
+            {
+                playerHeight = 0.5;
+                jumpSpeed = Math.sqrt(-2 * jumpAcceleration * jumpHeight);
+                jump = false;
+            }
         }
     }
 }

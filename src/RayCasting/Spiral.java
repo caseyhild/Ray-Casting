@@ -6,7 +6,7 @@ public class Spiral
         int numVertical = 10;
         int numAround = 6;
         double radius = 0.2;
-        double height = 1.2;
+        double height = 1.0;
         double twistAngle = 120;
         double x, y, z;
         for(double deg = 0; deg < 360; deg += 360.0/numAround)
