@@ -434,9 +434,17 @@ public class Texture {
                 // Try local resources directory when running from JAR
                 file = new File("resources/SavedTextures/" + name + ".txt");
                 if(!file.exists()) {
-                    // Try to extract from JAR resources
-                    extractResourceFromJar("resources/SavedTextures/" + name + ".txt");
-                    file = new File("resources/SavedTextures/" + name + ".txt");
+                    // For app bundle, get JAR location and look for resources relative to it
+                    String jarPath = Texture.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                    File jarFile = new File(jarPath);
+                    File jarDir = jarFile.getParentFile();
+                    file = new File(jarDir, "resources/SavedTextures/" + name + ".txt");
+                    
+                    if(!file.exists()) {
+                        // Try to extract from JAR resources
+                        extractResourceFromJar("resources/SavedTextures/" + name + ".txt");
+                        file = new File("resources/SavedTextures/" + name + ".txt");
+                    }
                 }
             }
             Scanner in = new Scanner(file);

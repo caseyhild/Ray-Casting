@@ -132,15 +132,30 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
         //set starting frame
         frame = 0;
         //Create 3D Points files only if they don't already exist
+        
         // Try relative path from source directory first
         File testFolder = new File("../../resources/3DPoints");
         if(testFolder.exists()) {
             folder = testFolder;
         } else {
             // Use local resources directory when running from JAR
-            folder = new File("resources/3DPoints");
-            if(!folder.exists())
-                folder.mkdirs();
+            testFolder = new File("resources/3DPoints");
+            if(testFolder.exists()) {
+                folder = testFolder;
+            } else {
+                // For app bundle, resources are in Contents/app/resources
+                // Get the jar location and look for resources relative to it
+                String jarPath = RayCasting.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                File jarFile = new File(jarPath);
+                File jarDir = jarFile.getParentFile();
+                
+                // Resources should be in same directory as JAR
+                testFolder = new File(jarDir, "resources/3DPoints");
+                if(!testFolder.exists()) {
+                    testFolder.mkdirs();
+                }
+                folder = testFolder;
+            }
         }
         if(!new File(folder, "tree.txt").exists() || !new File(folder, "spiral.txt").exists())
         {

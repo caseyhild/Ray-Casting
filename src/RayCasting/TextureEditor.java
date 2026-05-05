@@ -939,8 +939,15 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
             if(!dir.exists()) {
                 // Use local resources directory when running from JAR
                 dir = new File("resources/SavedTextures");
-                if(!dir.exists())
-                    dir.mkdirs();
+                if(!dir.exists()) {
+                    // For app bundle, get JAR location and look for resources relative to it
+                    String jarPath = TextureEditor.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                    File jarFile = new File(jarPath);
+                    File jarDir = jarFile.getParentFile();
+                    dir = new File(jarDir, "resources/SavedTextures");
+                    if(!dir.exists())
+                        dir.mkdirs();
+                }
             }
             PrintWriter outFile = new PrintWriter(new File(dir, location + ".txt"));
             for(int x = 0; x < size; x++)

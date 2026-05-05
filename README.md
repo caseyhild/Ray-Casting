@@ -43,6 +43,28 @@ Or simply double-click `TextureEditor.jar`
 
 The JAR files are self-contained and will automatically extract required resources to a `resources/` folder on first run.
 
+### From macOS App Bundles
+
+**Ray Casting Game:**
+Double-click `RayCasting.app` or run:
+```bash
+open RayCasting.app
+```
+
+**Texture Editor:**
+Double-click `TextureEditor.app` or run:
+```bash
+open TextureEditor.app
+```
+
+The .app bundles are fully self-contained and include:
+- Embedded Java runtime (no Java installation required)
+- Application JAR file
+- All resources (textures, 3D point data)
+- Native macOS launcher
+
+**Note:** The .app bundles are larger (~250-500 MB) because they include a complete Java runtime, but users can run them without any dependencies.
+
 ## Texture Editor
 
 The Texture Editor allows you to create and modify 64x64 textures for use in the game.
@@ -72,6 +94,8 @@ The Texture Editor allows you to create and modify 64x64 textures for use in the
 Ray-Casting/
 ├── RayCasting.jar           # Executable JAR for the game
 ├── TextureEditor.jar        # Executable JAR for texture editor
+├── RayCasting.app/          # macOS app bundle for the game
+├── TextureEditor.app/       # macOS app bundle for texture editor
 ├── resources/
 │   ├── 3DPoints/
 │   │   ├── tree.txt         # Tree point cloud data
