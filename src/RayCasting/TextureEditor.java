@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -51,13 +52,17 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
     {
         addMouseListener(this);
         addMouseMotionListener(this);
-        Texture t = Texture.bricks;
+        loadTexture(Texture.bricks);
+        Arrays.fill(recentColors, -1);
+        copy = new int[0][0];
+    }
+    
+    private void loadTexture(Texture t)
+    {
         for(int i = 0; i < size * size; i++)
         {
             pixels[i % size][i/size] = t.pixels[i];
         }
-        Arrays.fill(recentColors, -1);
-        copy = new int[0][0];
     }
 
     public void paintComponent(Graphics g)
@@ -75,20 +80,14 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
                 g.drawRect(x * height/size, y * height/size, height/size, height/size);
             }
         }
-        for(int x = 0; x < 223; x++)
+        for(int x = 0; x < 224; x++)
         {
             int lineR;
             int lineG;
             int lineB;
             for(int y = 0; y < 192; y++)
             {
-                if(x == 0)
-                {
-                    lineR = 255;
-                    lineG = 0;
-                    lineB = 0;
-                }
-                else if(x < 32)
+                if(x < 32)
                 {
                     lineR = 255;
                     lineG = x % 32 * 8;
@@ -213,12 +212,21 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
             g.setColor(new Color(0, 0, 0));
             g.drawRoundRect(765, 200 - fm.getAscent()/2, rectWidth, rectHeight, 10, 10);
         }
+        int fillAllWidth = 10 + fm.stringWidth("Fill All");
+        if(drawingSize == -1)
+        {
+            g.setColor(new Color(255, 255, 255));
+            g.fillRoundRect(765, 220 - fm.getAscent()/2, fillAllWidth, rectHeight, 10, 10);
+            g.setColor(new Color(0, 0, 0));
+            g.drawRoundRect(765, 220 - fm.getAscent()/2, fillAllWidth, rectHeight, 10, 10);
+        }
         g.setColor(new Color(0, 0, 0));
         g.drawString("1x1", 770, 120 + fm.getAscent()/2);
         g.drawString("3x3", 770, 140 + fm.getAscent()/2);
         g.drawString("5x5", 770, 160 + fm.getAscent()/2);
         g.drawString("7x7", 770, 180 + fm.getAscent()/2);
         g.drawString("9x9", 770, 200 + fm.getAscent()/2);
+        g.drawString("Fill All", 770, 220 + fm.getAscent()/2);
         g.drawString("Recently Used Colors", 522, 222);
         g.drawLine(522, 224, 522 + fm.stringWidth("Recently Used Colors"), 224);
         for(int i = 0; i < recentColors.length; i++)
@@ -246,25 +254,34 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
             g.setColor(new Color(0, 0, 0));
             g.drawRoundRect(527, 312 - fm.getAscent()/2, rectWidth2, rectHeight2, 10, 10);
         }
-        if(drawingMode.equals("Copy"))
+        if(drawingMode.equals("Select Color"))
         {
-            rectWidth2 = 10 + fm.stringWidth("Copy");
+            rectWidth2 = 10 + fm.stringWidth("Select Color");
             g.setColor(new Color(255, 255, 255));
             g.fillRoundRect(527, 332 - fm.getAscent()/2, rectWidth2, rectHeight2, 10, 10);
             g.setColor(new Color(0, 0, 0));
             g.drawRoundRect(527, 332 - fm.getAscent()/2, rectWidth2, rectHeight2, 10, 10);
         }
-        if(drawingMode.equals("Paste"))
+        if(drawingMode.equals("Copy"))
         {
-            rectWidth2 = 10 + fm.stringWidth("Paste");
+            rectWidth2 = 10 + fm.stringWidth("Copy");
             g.setColor(new Color(255, 255, 255));
             g.fillRoundRect(527, 352 - fm.getAscent()/2, rectWidth2, rectHeight2, 10, 10);
             g.setColor(new Color(0, 0, 0));
             g.drawRoundRect(527, 352 - fm.getAscent()/2, rectWidth2, rectHeight2, 10, 10);
         }
+        if(drawingMode.equals("Paste"))
+        {
+            rectWidth2 = 10 + fm.stringWidth("Paste");
+            g.setColor(new Color(255, 255, 255));
+            g.fillRoundRect(527, 372 - fm.getAscent()/2, rectWidth2, rectHeight2, 10, 10);
+            g.setColor(new Color(0, 0, 0));
+            g.drawRoundRect(527, 372 - fm.getAscent()/2, rectWidth2, rectHeight2, 10, 10);
+        }
         g.drawString("Draw", 532, 312+ fm.getAscent()/2);
-        g.drawString("Copy", 532, 332 + fm.getAscent()/2);
-        g.drawString("Paste", 532, 352 + fm.getAscent()/2);
+        g.drawString("Select Color", 532, 332 + fm.getAscent()/2);
+        g.drawString("Copy", 532, 352 + fm.getAscent()/2);
+        g.drawString("Paste", 532, 372 + fm.getAscent()/2);
         if(drawingMode.equals("Copy"))
         {
             g.setColor(new Color(128, 128, 128, 128));
@@ -304,6 +321,30 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
                 pasteY = Math.max(0, Math.min((mouseY + adjusty)/cellSize - pasteHeight/2, size - pasteHeight));
             }
             g.fillRect(cellSize * pasteX, cellSize * pasteY, cellSize * pasteWidth, cellSize * pasteHeight);
+        }
+        if(drawingMode.equals("Draw") && mouseX >= 0 && mouseX < height && mouseY >= 0 && mouseY < height && drawingSize > 0)
+        {
+            // Show preview of drawing area
+            g.setColor(new Color(255, 255, 255, 128));
+            int centerCellX = size * mouseX / height;
+            int centerCellY = size * mouseY / height;
+            for (int y = centerCellY - drawingSize / 2; y <= centerCellY + drawingSize / 2; y++) {
+                for (int x = centerCellX - drawingSize / 2; x <= centerCellX + drawingSize / 2; x++) {
+                    if (x >= 0 && x < size && y >= 0 && y < size) {
+                        g.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                    }
+                }
+            }
+        }
+        if(drawingMode.equals("Select Color") && mouseX >= 0 && mouseX < height && mouseY >= 0 && mouseY < height)
+        {
+            // Show which cell will be selected
+            g.setColor(new Color(255, 255, 255, 128));
+            int cellX = size * mouseX / height;
+            int cellY = size * mouseY / height;
+            if (cellX >= 0 && cellX < size && cellY >= 0 && cellY < size) {
+                g.fillRect(cellX * cellSize, cellY * cellSize, cellSize, cellSize);
+            }
         }
         g.setColor(new Color(255, 255, 255));
         g.fillRoundRect(width - 100, height - 100, 90, 90, 16, 16);
@@ -412,44 +453,56 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
         {
             switch (drawingMode) {
                 case "Draw" -> {
-                    for (int y = size * mouseY / height - drawingSize / 2; y <= size * mouseY / height + drawingSize / 2; y++) {
-                        for (int x = size * mouseX / height - drawingSize / 2; x <= size * mouseX / height + drawingSize / 2; x++) {
-                            boolean stillRecent = false;
-                            for (int i = recentColors.length - 1; i >= 0; i--) {
-                                if (recentColors[i] == rgbNum(colorR, colorG, colorB)) {
-                                    stillRecent = true;
-                                    break;
-                                }
-                            }
-                            if (stillRecent && (colorR != -1 && colorG != -1 && colorB != -1)) {
-                                int color = 0;
-                                int index = 0;
+                    if (drawingSize == -1) {
+                        // Fill All button
+                        fillAll();
+                    } else {
+                        // Normal drawing with brush size
+                        for (int y = size * mouseY / height - drawingSize / 2; y <= size * mouseY / height + drawingSize / 2; y++) {
+                            for (int x = size * mouseX / height - drawingSize / 2; x <= size * mouseX / height + drawingSize / 2; x++) {
+                                boolean stillRecent = false;
                                 for (int i = recentColors.length - 1; i >= 0; i--) {
                                     if (recentColors[i] == rgbNum(colorR, colorG, colorB)) {
-                                        color = rgbNum(colorR, colorG, colorB);
-                                        index = i;
-                                        if (clickedRecent) {
-                                            colorX = 537;
-                                            colorY = 247;
-                                        }
+                                        stillRecent = true;
+                                        break;
                                     }
                                 }
-                                for (int i = index; i >= 1; i--) {
-                                    recentColors[i] = recentColors[i - 1];
-                                }
-                                recentColors[0] = color;
-                            } else if (colorR != -1 && colorG != -1 && colorB != -1) {
-                                for (int i = recentColors.length - 1; i >= 0; i--) {
-                                    if (i == 0)
-                                        recentColors[0] = rgbNum(colorR, colorG, colorB);
-                                    else
+                                if (stillRecent && (colorR != -1 && colorG != -1 && colorB != -1)) {
+                                    int color = 0;
+                                    int index = 0;
+                                    for (int i = recentColors.length - 1; i >= 0; i--) {
+                                        if (recentColors[i] == rgbNum(colorR, colorG, colorB)) {
+                                            color = rgbNum(colorR, colorG, colorB);
+                                            index = i;
+                                            if (clickedRecent) {
+                                                colorX = 537;
+                                                colorY = 247;
+                                            }
+                                        }
+                                    }
+                                    for (int i = index; i >= 1; i--) {
                                         recentColors[i] = recentColors[i - 1];
+                                    }
+                                    recentColors[0] = color;
+                                } else if (colorR != -1 && colorG != -1 && colorB != -1) {
+                                    for (int i = recentColors.length - 1; i >= 0; i--) {
+                                        if (i == 0)
+                                            recentColors[0] = rgbNum(colorR, colorG, colorB);
+                                        else
+                                            recentColors[i] = recentColors[i - 1];
+                                    }
                                 }
+                                if (colorR != -1 && colorG != -1 && colorB != -1)
+                                    pixels[Math.min(Math.max(x, 0), 63)][Math.min(Math.max(y, 0), 63)] = rgbNum(colorR, colorG, colorB);
                             }
-                            if (colorR != -1 && colorG != -1 && colorB != -1)
-                                pixels[Math.min(Math.max(x, 0), 63)][Math.min(Math.max(y, 0), 63)] = rgbNum(colorR, colorG, colorB);
                         }
                     }
+                }
+                case "Select Color" -> {
+                    // Pick color from the pixel at mouse position
+                    int pixelX = size * mouseX / height;
+                    int pixelY = size * mouseY / height;
+                    selectColorFromPixel(pixelX, pixelY);
                 }
                 case "Copy" -> {
                     if (drawCopyText) {
@@ -506,11 +559,17 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
             drawingSize = 7;
         if(mouseX > 765 && mouseX < 775 + rectWidth && mouseY > 202 - rectHeight/2 && mouseY < 202 + rectHeight)
             drawingSize = 9;
+        FontMetrics fm = new JLabel().getFontMetrics(new Font("Verdana", Font.PLAIN, 15));
+        int fillAllWidth = 10 + fm.stringWidth("Fill All");
+        if(mouseX > 765 && mouseX < 775 + fillAllWidth && mouseY > 222 - rectHeight/2 && mouseY < 222 + rectHeight)
+            drawingSize = -1;
         if(mouseX > 532 && mouseX < 542 + rectWidth2 && mouseY > 312 - rectHeight/2 && mouseY < 312 + rectWidth)
             drawingMode = "Draw";
         if(mouseX > 532 && mouseX < 542 + rectWidth2 && mouseY > 332 - rectHeight/2 && mouseY < 332 + rectWidth)
-            drawingMode = "Copy";
+            drawingMode = "Select Color";
         if(mouseX > 532 && mouseX < 542 + rectWidth2 && mouseY > 352 - rectHeight/2 && mouseY < 352 + rectWidth)
+            drawingMode = "Copy";
+        if(mouseX > 532 && mouseX < 542 + rectWidth2 && mouseY > 372 - rectHeight/2 && mouseY < 372 + rectWidth)
             drawingMode = "Paste";
         for(int i = 0; i < recentColors.length; i++)
         {
@@ -678,44 +737,55 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
         {
             switch (drawingMode) {
                 case "Draw" -> {
-                    for (int y = size * mouseY / height - drawingSize / 2; y <= size * mouseY / height + drawingSize / 2; y++) {
-                        for (int x = size * mouseX / height - drawingSize / 2; x <= size * mouseX / height + drawingSize / 2; x++) {
-                            boolean stillRecent = false;
-                            for (int i = recentColors.length - 1; i >= 0; i--) {
-                                if (recentColors[i] == rgbNum(colorR, colorG, colorB)) {
-                                    stillRecent = true;
-                                    break;
-                                }
-                            }
-                            if (stillRecent && (colorR != -1 && colorG != -1 && colorB != -1)) {
-                                int color = 0;
-                                int index = 0;
+                    if (drawingSize == -1) {
+                        // Fill All button - do nothing on drag
+                    } else {
+                        // Normal drawing with brush size
+                        for (int y = size * mouseY / height - drawingSize / 2; y <= size * mouseY / height + drawingSize / 2; y++) {
+                            for (int x = size * mouseX / height - drawingSize / 2; x <= size * mouseX / height + drawingSize / 2; x++) {
+                                boolean stillRecent = false;
                                 for (int i = recentColors.length - 1; i >= 0; i--) {
                                     if (recentColors[i] == rgbNum(colorR, colorG, colorB)) {
-                                        color = rgbNum(colorR, colorG, colorB);
-                                        index = i;
-                                        if (clickedRecent) {
-                                            colorX = 537;
-                                            colorY = 247;
-                                        }
+                                        stillRecent = true;
+                                        break;
                                     }
                                 }
-                                for (int i = index; i >= 1; i--) {
-                                    recentColors[i] = recentColors[i - 1];
-                                }
-                                recentColors[0] = color;
-                            } else if (colorR != -1 && colorG != -1 && colorB != -1) {
-                                for (int i = recentColors.length - 1; i >= 0; i--) {
-                                    if (i == 0)
-                                        recentColors[0] = rgbNum(colorR, colorG, colorB);
-                                    else
+                                if (stillRecent && (colorR != -1 && colorG != -1 && colorB != -1)) {
+                                    int color = 0;
+                                    int index = 0;
+                                    for (int i = recentColors.length - 1; i >= 0; i--) {
+                                        if (recentColors[i] == rgbNum(colorR, colorG, colorB)) {
+                                            color = rgbNum(colorR, colorG, colorB);
+                                            index = i;
+                                            if (clickedRecent) {
+                                                colorX = 537;
+                                                colorY = 247;
+                                            }
+                                        }
+                                    }
+                                    for (int i = index; i >= 1; i--) {
                                         recentColors[i] = recentColors[i - 1];
+                                    }
+                                    recentColors[0] = color;
+                                } else if (colorR != -1 && colorG != -1 && colorB != -1) {
+                                    for (int i = recentColors.length - 1; i >= 0; i--) {
+                                        if (i == 0)
+                                            recentColors[0] = rgbNum(colorR, colorG, colorB);
+                                        else
+                                            recentColors[i] = recentColors[i - 1];
+                                    }
                                 }
+                                if (colorR != -1 && colorG != -1 && colorB != -1)
+                                    pixels[Math.min(Math.max(x, 0), 63)][Math.min(Math.max(y, 0), 63)] = rgbNum(colorR, colorG, colorB);
                             }
-                            if (colorR != -1 && colorG != -1 && colorB != -1)
-                                pixels[Math.min(Math.max(x, 0), 63)][Math.min(Math.max(y, 0), 63)] = rgbNum(colorR, colorG, colorB);
                         }
                     }
+                }
+                case "Select Color" -> {
+                    // Pick color from the pixel at mouse position
+                    int pixelX = size * mouseX / height;
+                    int pixelY = size * mouseY / height;
+                    selectColorFromPixel(pixelX, pixelY);
                 }
                 case "Copy" -> {
                     if (startCellX == -1) {
@@ -798,11 +868,17 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
             drawingSize = 7;
         if(mouseX > 765 && mouseX < 775 + rectWidth && mouseY > 202 - rectHeight/2 && mouseY < 202 + rectHeight)
             drawingSize = 9;
+        FontMetrics fm2 = new JLabel().getFontMetrics(new Font("Verdana", Font.PLAIN, 15));
+        int fillAllWidth2 = 10 + fm2.stringWidth("Fill All");
+        if(mouseX > 765 && mouseX < 775 + fillAllWidth2 && mouseY > 222 - rectHeight/2 && mouseY < 222 + rectHeight)
+            drawingSize = -1;
         if(mouseX > 532 && mouseX < 542 + rectWidth2 && mouseY > 312 - rectHeight/2 && mouseY < 312 + rectWidth)
             drawingMode = "Draw";
         if(mouseX > 532 && mouseX < 542 + rectWidth2 && mouseY > 332 - rectHeight/2 && mouseY < 332 + rectWidth)
-            drawingMode = "Copy";
+            drawingMode = "Select Color";
         if(mouseX > 532 && mouseX < 542 + rectWidth2 && mouseY > 352 - rectHeight/2 && mouseY < 352 + rectWidth)
+            drawingMode = "Copy";
+        if(mouseX > 532 && mouseX < 542 + rectWidth2 && mouseY > 372 - rectHeight/2 && mouseY < 372 + rectWidth)
             drawingMode = "Paste";
         for(int i = 0; i < recentColors.length; i++)
         {
@@ -830,7 +906,15 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
         String location = JOptionPane.showInputDialog("Name of file to save to:");
         if(location != null && !location.isEmpty())
         {
-            PrintWriter outFile = new PrintWriter("SavedTextures/" + location + ".txt");
+            // Try relative path from source directory first
+            File dir = new File("../../resources/SavedTextures");
+            if(!dir.exists()) {
+                // Use local directory when running from JAR
+                dir = new File("SavedTextures");
+                if(!dir.exists())
+                    dir.mkdirs();
+            }
+            PrintWriter outFile = new PrintWriter(new File(dir, location + ".txt"));
             for(int x = 0; x < size; x++)
             {
                 for(int y = 0; y < size; y++)
@@ -889,6 +973,105 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
         }
     }
 
+    private void fillAll()
+    {
+        if (colorR != -1 && colorG != -1 && colorB != -1) {
+            int fillColor = rgbNum(colorR, colorG, colorB);
+            for (int y = 0; y < size; y++) {
+                for (int x = 0; x < size; x++) {
+                    pixels[x][y] = fillColor;
+                }
+            }
+            addToRecentColors(fillColor);
+        }
+    }
+    
+    private void selectColorFromPixel(int pixelX, int pixelY)
+    {
+        if (pixelX >= 0 && pixelX < size && pixelY >= 0 && pixelY < size) {
+            int selectedColor = pixels[pixelX][pixelY];
+            colorR = getR(selectedColor);
+            colorG = getG(selectedColor);
+            colorB = getB(selectedColor);
+            
+            // Calculate the proper position in the color picker for this RGB value
+            // The color picker is organized as a hue gradient horizontally and brightness vertically
+            // This is a simplified approach - we'll try to find a reasonable position
+            
+            // For now, set to a position that represents the color
+            // The exact reverse calculation is complex, so we use a reasonable approximation
+            int maxComponent = Math.max(colorR, Math.max(colorG, colorB));
+            int minComponent = Math.min(colorR, Math.min(colorG, colorB));
+            
+            // Calculate approximate hue position (0-192 for color, 192-223 for gray)
+            int hueX = colorPickerX + 100; // default middle
+            if (maxComponent == minComponent) {
+                // Grayscale
+                hueX = colorPickerX + 197;
+            } else if (colorR == maxComponent && colorG >= colorB) {
+                // Red to Yellow
+                hueX = colorPickerX + (colorG - minComponent) * 32 / (maxComponent - minComponent);
+            } else if (colorG == maxComponent && colorR > colorB) {
+                // Yellow to Green
+                hueX = colorPickerX + 32 + (maxComponent - colorR) * 32 / (maxComponent - minComponent);
+            } else if (colorG == maxComponent) {
+                // Green to Cyan
+                hueX = colorPickerX + 64 + (colorB - minComponent) * 32 / (maxComponent - minComponent);
+            } else if (colorB == maxComponent && colorG > colorR) {
+                // Cyan to Blue
+                hueX = colorPickerX + 96 + (maxComponent - colorG) * 32 / (maxComponent - minComponent);
+            } else if (colorB == maxComponent) {
+                // Blue to Magenta
+                hueX = colorPickerX + 128 + (colorR - minComponent) * 32 / (maxComponent - minComponent);
+            } else if (colorR == maxComponent) {
+                // Magenta to Red
+                hueX = colorPickerX + 160 + (maxComponent - colorG) * 32 / (maxComponent - minComponent);
+            }
+            
+            // Calculate brightness position (0-192 vertically)
+            int brightnessY;
+            if (maxComponent <= 128) {
+                // Dark half (0-96)
+                brightnessY = colorPickerY + maxComponent * 96 / 128;
+            } else {
+                // Bright half (96-192)
+                brightnessY = colorPickerY + 96 + (maxComponent - 128) * 96 / 127;
+            }
+            
+            colorX = Math.max(colorPickerX, Math.min(hueX, colorPickerX + 222));
+            colorY = Math.max(colorPickerY, Math.min(brightnessY, colorPickerY + 191));
+            
+            addToRecentColors(selectedColor);
+            clickedRecent = false;
+        }
+    }
+    
+    private void addToRecentColors(int color)
+    {
+        boolean stillRecent = false;
+        int index = -1;
+        for (int i = recentColors.length - 1; i >= 0; i--) {
+            if (recentColors[i] == color) {
+                stillRecent = true;
+                index = i;
+                break;
+            }
+        }
+        if (stillRecent) {
+            // Move to front
+            for (int i = index; i >= 1; i--) {
+                recentColors[i] = recentColors[i - 1];
+            }
+            recentColors[0] = color;
+        } else {
+            // Add to front, shift others
+            for (int i = recentColors.length - 1; i >= 1; i--) {
+                recentColors[i] = recentColors[i - 1];
+            }
+            recentColors[0] = color;
+        }
+    }
+
     private int rgbNum(int r, int g, int b)
     {
         //gets rgb decimal value from rgb input
@@ -921,6 +1104,49 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
         jf.setTitle("Texture Editor");
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jf.setResizable(false);
+        
+        // Create menu bar
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+        JMenu templatesMenu = new JMenu("Load Template");
+        
+        // Add template options
+        String[] templates = {"Bricks", "Black", "Cool Pattern", "Grass", "Gravel", "Gray",
+                             "Flag", "XOR", "Circles", "Collisions", "Wave", "Dog",
+                             "Fractal", "Map", "Tiles", "Waves"};
+        
+        for(String template : templates) {
+            JMenuItem item = new JMenuItem(template);
+            item.addActionListener(e -> {
+                Texture t = switch(template) {
+                    case "Bricks" -> Texture.bricks;
+                    case "Black" -> Texture.black;
+                    case "Cool Pattern" -> Texture.coolpattern;
+                    case "Grass" -> Texture.grass;
+                    case "Gravel" -> Texture.gravel;
+                    case "Gray" -> Texture.gray;
+                    case "Flag" -> Texture.flag;
+                    case "XOR" -> Texture.xor;
+                    case "Circles" -> Texture.circles;
+                    case "Collisions" -> Texture.collisions;
+                    case "Wave" -> Texture.wave;
+                    case "Dog" -> Texture.dog;
+                    case "Fractal" -> Texture.fractal;
+                    case "Map" -> Texture.map;
+                    case "Tiles" -> Texture.tiles;
+                    case "Waves" -> Texture.waves;
+                    default -> Texture.bricks;
+                };
+                te.loadTexture(t);
+                te.repaint();
+            });
+            templatesMenu.add(item);
+        }
+        
+        fileMenu.add(templatesMenu);
+        menuBar.add(fileMenu);
+        jf.setJMenuBar(menuBar);
+        
         jf.add(te);
         jf.pack();
         jf.setLocationRelativeTo(null);

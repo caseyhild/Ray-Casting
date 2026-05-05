@@ -428,12 +428,41 @@ public class Texture {
     // ===== FILE LOADER =====
     private void loadFromFile(String name) {
         try {
-            Scanner in = new Scanner(new File("../../resources/SavedTextures/" + name + ".txt"));
+            // Try relative path from source directory first
+            File file = new File("../../resources/SavedTextures/" + name + ".txt");
+            if(!file.exists()) {
+                // Try local directory when running from JAR
+                file = new File("SavedTextures/" + name + ".txt");
+                if(!file.exists()) {
+                    // Try to extract from JAR resources
+                    extractResourceFromJar("SavedTextures/" + name + ".txt");
+                    file = new File("SavedTextures/" + name + ".txt");
+                }
+            }
+            Scanner in = new Scanner(file);
             for (int i = 0; i < pixels.length; i++) {
                 pixels[i] = in.nextInt();
             }
             in.close();
         } catch (IOException ignored) {}
+    }
+    
+    private void extractResourceFromJar(String resourcePath) {
+        try {
+            java.io.InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
+            if(in != null) {
+                java.io.File outFile = new java.io.File(resourcePath);
+                outFile.getParentFile().mkdirs();
+                java.io.FileOutputStream out = new java.io.FileOutputStream(outFile);
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+                in.close();
+                out.close();
+            }
+        } catch(Exception ignored) {}
     }
 
     // ===== UTILS =====
