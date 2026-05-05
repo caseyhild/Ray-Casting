@@ -8,7 +8,7 @@ A 3D ray casting engine built in Java with multi-level environments, vertical ca
 - **Mouse look** - Full 3D camera with horizontal and vertical rotation
 - **Parallel rendering** - Multi-threaded rendering pipeline for smooth performance
 - **Distance fog** - Atmospheric depth effects
-- **Point cloud sprites** - Models and objects rendered in the world from 3D point data
+- **Point cloud sprites** - Complex structures rendered in the world from 3D point data
 - **Shooting mechanics** - Projectile system with depth testing
 
 ## Controls
