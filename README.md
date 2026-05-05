@@ -20,28 +20,83 @@ A 3D ray casting engine built in Java with multi-level environments, vertical ca
 
 ## Running
 
+### From Source
 ```bash
 cd src/RayCasting
 javac RayCasting.java
 java RayCasting
 ```
 
+### From JAR Files
+
+**Ray Casting Game:**
+```bash
+java -jar RayCasting.jar
+```
+Or simply double-click `RayCasting.jar`
+
+**Texture Editor:**
+```bash
+java -jar TextureEditor.jar
+```
+Or simply double-click `TextureEditor.jar`
+
+The JAR files are self-contained and will automatically extract required resources to a `resources/` folder on first run.
+
+## Texture Editor
+
+The Texture Editor allows you to create and modify 64x64 textures for use in the game.
+
+### Features
+- **Color Picker** - Full RGB color selection with gradient picker
+- **Manual RGB Input** - Type exact RGB values (0-255)
+- **Brush Sizes** - 1x1, 3x3, 5x5, 7x7, 9x9, and Fill All
+- **Drawing Modes**:
+  - **Draw** - Paint with selected color and brush size
+  - **Select Color** - Pick colors from existing pixels
+  - **Copy** - Select and copy rectangular regions
+  - **Paste** - Paste copied regions
+- **Recently Used Colors** - Quick access to your last 5 colors
+- **Template Library** - Load from 16 preset textures
+- **Save/Load** - Save custom textures to `resources/SavedTextures/`
+
+### Usage
+1. Select a color using the gradient picker or type RGB values
+2. Choose a brush size or drawing mode
+3. Click or drag on the 64x64 grid to draw
+4. Click SAVE to export your texture
+
 ## Project Structure
 
 ```
-src/RayCasting/
-├── RayCasting.java      # Main game loop and initialization
-├── Screen.java          # Rendering engine with parallel pipeline
-├── Camera.java          # Input handling and player movement
-├── Texture.java         # Texture generation and animation
-├── Shot.java            # Projectile physics
-├── Tree.java            # Tree sprite generator
-├── Spiral.java          # Spiral sprite generator
-├── CreatePoints.java    # 3D point file creation
-├── PointsFile.java      # Point cloud data structure
-├── TextureEditor.java   # Texture editing tool
-├── Vector2D.java        # 2D vector math
-└── Vector3D.java        # 3D vector math
+Ray-Casting/
+├── RayCasting.jar           # Executable JAR for the game
+├── TextureEditor.jar        # Executable JAR for texture editor
+├── resources/
+│   ├── 3DPoints/
+│   │   ├── tree.txt         # Tree point cloud data
+│   │   └── spiral.txt       # Spiral point cloud data
+│   └── SavedTextures/
+│       ├── bricks.txt       # Brick texture
+│       ├── dog.txt          # Dog texture
+│       ├── fractal.txt      # Fractal texture
+│       ├── map.txt          # Map texture
+│       ├── tiles.txt        # Tiles texture
+│       └── waves.txt        # Waves texture
+└── src/RayCasting/
+    ├── RayCasting.java      # Main game loop and initialization
+    ├── Screen.java          # Rendering engine with parallel pipeline
+    ├── Camera.java          # Input handling and player movement
+    ├── Texture.java         # Texture generation and animation
+    ├── Shot.java            # Projectile physics
+    ├── Zombie.java          # Enemy entity
+    ├── Tree.java            # Tree sprite generator
+    ├── Spiral.java          # Spiral sprite generator
+    ├── CreatePoints.java    # 3D point file creation
+    ├── PointsFile.java      # Point cloud data structure
+    ├── TextureEditor.java   # Texture editing tool
+    ├── Vector2D.java        # 2D vector math
+    └── Vector3D.java        # 3D vector math
 ```
 
 ## Screenshots

@@ -431,12 +431,12 @@ public class Texture {
             // Try relative path from source directory first
             File file = new File("../../resources/SavedTextures/" + name + ".txt");
             if(!file.exists()) {
-                // Try local directory when running from JAR
-                file = new File("SavedTextures/" + name + ".txt");
+                // Try local resources directory when running from JAR
+                file = new File("resources/SavedTextures/" + name + ".txt");
                 if(!file.exists()) {
                     // Try to extract from JAR resources
-                    extractResourceFromJar("SavedTextures/" + name + ".txt");
-                    file = new File("SavedTextures/" + name + ".txt");
+                    extractResourceFromJar("resources/SavedTextures/" + name + ".txt");
+                    file = new File("resources/SavedTextures/" + name + ".txt");
                 }
             }
             Scanner in = new Scanner(file);
@@ -449,7 +449,12 @@ public class Texture {
     
     private void extractResourceFromJar(String resourcePath) {
         try {
-            java.io.InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
+            // Try with resources/ prefix first
+            java.io.InputStream in = getClass().getClassLoader().getResourceAsStream("resources/" + resourcePath);
+            if(in == null) {
+                // Try without prefix
+                in = getClass().getClassLoader().getResourceAsStream(resourcePath);
+            }
             if(in != null) {
                 java.io.File outFile = new java.io.File(resourcePath);
                 outFile.getParentFile().mkdirs();

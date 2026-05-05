@@ -137,19 +137,26 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
         if(testFolder.exists()) {
             folder = testFolder;
         } else {
-            // Use local directory when running from JAR
-            folder = new File("3DPoints");
+            // Use local resources directory when running from JAR
+            folder = new File("resources/3DPoints");
             if(!folder.exists())
                 folder.mkdirs();
         }
         if(!new File(folder, "tree.txt").exists() || !new File(folder, "spiral.txt").exists())
         {
-            File[] filelist = folder.listFiles();
-            if(filelist == null)
-                filelist = new File[0];
-            for (File file : filelist)
-                file.delete();
-            new CreatePoints(folder.getPath());
+            // Try to extract from JAR resources first
+            boolean extracted = extractResourceFromJar("resources/3DPoints/tree.txt") && 
+                               extractResourceFromJar("resources/3DPoints/spiral.txt");
+            
+            if(!extracted) {
+                // If extraction failed, generate the files
+                File[] filelist = folder.listFiles();
+                if(filelist == null)
+                    filelist = new File[0];
+                for (File file : filelist)
+                    file.delete();
+                new CreatePoints(folder.getPath());
+            }
         }
         files = new ArrayList<>();
         readFile("tree.txt");
@@ -518,6 +525,31 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
     {
         //gets b value from rgb decimal input
         return color % 65536 % 256;
+    }
+    
+    private boolean extractResourceFromJar(String resourcePath) {
+        try {
+            // Try with resources/ prefix first
+            java.io.InputStream in = getClass().getClassLoader().getResourceAsStream("resources/" + resourcePath);
+            if(in == null) {
+                // Try without prefix
+                in = getClass().getClassLoader().getResourceAsStream(resourcePath);
+            }
+            if(in != null) {
+                java.io.File outFile = new java.io.File(resourcePath);
+                outFile.getParentFile().mkdirs();
+                java.io.FileOutputStream out = new java.io.FileOutputStream(outFile);
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+                in.close();
+                out.close();
+                return true;
+            }
+        } catch(Exception ignored) {}
+        return false;
     }
 
     public static void main(String[] args) throws IOException

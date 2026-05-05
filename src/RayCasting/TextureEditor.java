@@ -47,6 +47,9 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
     private int mouseX;
     private int mouseY;
     private static final int MOUSE_Y_OFFSET = -2;  // Offset to account for panel border/insets
+    private JTextField rField;
+    private JTextField gField;
+    private JTextField bField;
 
     public TextureEditor()
     {
@@ -55,6 +58,24 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
         loadTexture(Texture.bricks);
         Arrays.fill(recentColors, -1);
         copy = new int[0][0];
+        
+        // Create RGB text fields
+        setLayout(null);
+        
+        rField = new JTextField("0");
+        rField.setBounds(835, 20, 50, 20);
+        rField.addActionListener(e -> updateColorFromFields());
+        add(rField);
+        
+        gField = new JTextField("0");
+        gField.setBounds(835, 45, 50, 20);
+        gField.addActionListener(e -> updateColorFromFields());
+        add(gField);
+        
+        bField = new JTextField("0");
+        bField.setBounds(835, 70, 50, 20);
+        bField.addActionListener(e -> updateColorFromFields());
+        add(bField);
     }
     
     private void loadTexture(Texture t)
@@ -74,7 +95,10 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
         {
             for(int y = 0; y < size; y++)
             {
-                g.setColor(new Color(getR(pixels[x][y]), getG(pixels[x][y]), getB(pixels[x][y])));
+                int pixelR = Math.max(0, Math.min(255, getR(pixels[x][y])));
+                int pixelG = Math.max(0, Math.min(255, getG(pixels[x][y])));
+                int pixelB = Math.max(0, Math.min(255, getB(pixels[x][y])));
+                g.setColor(new Color(pixelR, pixelG, pixelB));
                 g.fillRect(x * height/size, y * height/size, height/size, height/size);
                 g.setColor(new Color(0, 0, 0));
                 g.drawRect(x * height/size, y * height/size, height/size, height/size);
@@ -448,6 +472,7 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
             if(colorX >= colorPickerX + 195 && colorX <= colorPickerX + 197)
                 colorX = colorPickerX + 197;
             clickedRecent = false;
+            updateTextFields();
         }
         else if(mouseX >= 0 && mouseX < height && mouseY >= 0 && mouseY < height)
         {
@@ -581,6 +606,7 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
                 colorX = 537 + 40 * i;
                 colorY = 247;
                 clickedRecent = true;
+                updateTextFields();
             }
         }
         repaint();
@@ -732,6 +758,7 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
             if(colorX >= colorPickerX + 195 && colorX <= colorPickerX + 197)
                 colorX = colorPickerX + 197;
             clickedRecent = false;
+            updateTextFields();
         }
         else if(mouseX >= 0 && mouseX < height && mouseY >= 0 && mouseY < height)
         {
@@ -890,6 +917,7 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
                 colorX = 537 + 40 * i;
                 colorY = 247;
                 clickedRecent = true;
+                updateTextFields();
             }
         }
         repaint();
@@ -909,8 +937,8 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
             // Try relative path from source directory first
             File dir = new File("../../resources/SavedTextures");
             if(!dir.exists()) {
-                // Use local directory when running from JAR
-                dir = new File("SavedTextures");
+                // Use local resources directory when running from JAR
+                dir = new File("resources/SavedTextures");
                 if(!dir.exists())
                     dir.mkdirs();
             }
@@ -924,7 +952,7 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
                 outFile.println();
             }
             outFile.close();
-            JOptionPane.showMessageDialog(null, "Saved to '" + location + ".txt'\nin SavedTextures folder.");
+            JOptionPane.showMessageDialog(null, "Saved to '" + location + ".txt'\nin resources/SavedTextures folder.");
         }
     }
 
@@ -994,55 +1022,12 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
             colorG = getG(selectedColor);
             colorB = getB(selectedColor);
             
-            // Calculate the proper position in the color picker for this RGB value
-            // The color picker is organized as a hue gradient horizontally and brightness vertically
-            // This is a simplified approach - we'll try to find a reasonable position
-            
-            // For now, set to a position that represents the color
-            // The exact reverse calculation is complex, so we use a reasonable approximation
-            int maxComponent = Math.max(colorR, Math.max(colorG, colorB));
-            int minComponent = Math.min(colorR, Math.min(colorG, colorB));
-            
-            // Calculate approximate hue position (0-192 for color, 192-223 for gray)
-            int hueX = colorPickerX + 100; // default middle
-            if (maxComponent == minComponent) {
-                // Grayscale
-                hueX = colorPickerX + 197;
-            } else if (colorR == maxComponent && colorG >= colorB) {
-                // Red to Yellow
-                hueX = colorPickerX + (colorG - minComponent) * 32 / (maxComponent - minComponent);
-            } else if (colorG == maxComponent && colorR > colorB) {
-                // Yellow to Green
-                hueX = colorPickerX + 32 + (maxComponent - colorR) * 32 / (maxComponent - minComponent);
-            } else if (colorG == maxComponent) {
-                // Green to Cyan
-                hueX = colorPickerX + 64 + (colorB - minComponent) * 32 / (maxComponent - minComponent);
-            } else if (colorB == maxComponent && colorG > colorR) {
-                // Cyan to Blue
-                hueX = colorPickerX + 96 + (maxComponent - colorG) * 32 / (maxComponent - minComponent);
-            } else if (colorB == maxComponent) {
-                // Blue to Magenta
-                hueX = colorPickerX + 128 + (colorR - minComponent) * 32 / (maxComponent - minComponent);
-            } else if (colorR == maxComponent) {
-                // Magenta to Red
-                hueX = colorPickerX + 160 + (maxComponent - colorG) * 32 / (maxComponent - minComponent);
-            }
-            
-            // Calculate brightness position (0-192 vertically)
-            int brightnessY;
-            if (maxComponent <= 128) {
-                // Dark half (0-96)
-                brightnessY = colorPickerY + maxComponent * 96 / 128;
-            } else {
-                // Bright half (96-192)
-                brightnessY = colorPickerY + 96 + (maxComponent - 128) * 96 / 127;
-            }
-            
-            colorX = Math.max(colorPickerX, Math.min(hueX, colorPickerX + 222));
-            colorY = Math.max(colorPickerY, Math.min(brightnessY, colorPickerY + 191));
+            // Calculate accurate color picker position
+            calculateColorPickerPosition();
             
             addToRecentColors(selectedColor);
             clickedRecent = false;
+            updateTextFields();
         }
     }
     
@@ -1070,6 +1055,156 @@ public class TextureEditor extends JPanel implements ActionListener, MouseListen
             }
             recentColors[0] = color;
         }
+    }
+    
+    private void updateColorFromFields()
+    {
+        try {
+            int r = Integer.parseInt(rField.getText().trim());
+            int g = Integer.parseInt(gField.getText().trim());
+            int b = Integer.parseInt(bField.getText().trim());
+            
+            // Clamp values to 0-255
+            r = Math.max(0, Math.min(255, r));
+            g = Math.max(0, Math.min(255, g));
+            b = Math.max(0, Math.min(255, b));
+            
+            colorR = r;
+            colorG = g;
+            colorB = b;
+            
+            // Update text fields with clamped values
+            rField.setText(String.valueOf(colorR));
+            gField.setText(String.valueOf(colorG));
+            bField.setText(String.valueOf(colorB));
+            
+            // Calculate accurate color picker position
+            calculateColorPickerPosition();
+            
+            clickedRecent = false;
+            repaint();
+        } catch (NumberFormatException ignored) {
+            // Invalid input, restore current values
+            if (colorR != -1) rField.setText(String.valueOf(colorR));
+            if (colorG != -1) gField.setText(String.valueOf(colorG));
+            if (colorB != -1) bField.setText(String.valueOf(colorB));
+        }
+    }
+    
+    private void calculateColorPickerPosition()
+    {
+        if (colorR == -1 || colorG == -1 || colorB == -1) return;
+        
+        int r = colorR;
+        int g = colorG;
+        int b = colorB;
+        
+        // Find max and min to determine the pure hue
+        int maxComp = Math.max(r, Math.max(g, b));
+        int minComp = Math.min(r, Math.min(g, b));
+        
+        // First, reverse the vertical transformation to find the pure hue color
+        // and determine which y position we're at
+        int pureR, pureG, pureB;
+        int yPos;
+        
+        if (maxComp == minComp) {
+            // Grayscale
+            colorX = colorPickerX + 197;
+            // Map grayscale value to y position
+            if (maxComp <= 128) {
+                yPos = colorPickerY + maxComp * 96 / 128;
+            } else {
+                yPos = colorPickerY + 96 + (maxComp - 128) * 96 / 127;
+            }
+            colorY = yPos;
+            return;
+        }
+        
+        // Determine if we're in the dark zone (y < 96) or light zone (y >= 96)
+        // by checking the ratio of min to max
+        double ratio = (double)minComp / maxComp;
+        
+        if (ratio < 0.5) {
+            // Dark zone: color = pureHue * (y/96)
+            // So: pureHue = color / (y/96) = color * 96 / y
+            // And: y = maxComp * 96 / 255 (since pure hue has max=255)
+            yPos = colorPickerY + maxComp * 96 / 255;
+            
+            // Calculate pure hue by scaling up
+            if (maxComp > 0) {
+                pureR = r * 255 / maxComp;
+                pureG = g * 255 / maxComp;
+                pureB = b * 255 / maxComp;
+            } else {
+                pureR = pureG = pureB = 0;
+            }
+        } else {
+            // Light zone: color = 255 - (255 - pureHue) * (192-y)/96
+            // Solving for y: (192-y)/96 = (255 - color) / (255 - pureHue)
+            // We need to find pureHue first
+            
+            // In light zone, the pure hue is when minComp = 0
+            // The amount of white added is minComp
+            // So: pureHue = color - minComp (approximately)
+            pureR = Math.max(0, r - minComp);
+            pureG = Math.max(0, g - minComp);
+            pureB = Math.max(0, b - minComp);
+            
+            // Normalize to 255
+            int pureMax = Math.max(pureR, Math.max(pureG, pureB));
+            if (pureMax > 0) {
+                pureR = pureR * 255 / pureMax;
+                pureG = pureG * 255 / pureMax;
+                pureB = pureB * 255 / pureMax;
+            }
+            
+            // Calculate y position
+            // At y=96: minComp should be 0
+            // At y=192: minComp should equal maxComp (white)
+            yPos = colorPickerY + 96 + minComp * 96 / maxComp;
+        }
+        
+        // Now find the x position based on the pure hue
+        int xPos = colorPickerX;
+        
+        // Determine which segment the pure hue is in
+        if (pureR == 255 && pureB == 0) {
+            // Red to Yellow (0-32): R=255, G=0-255, B=0
+            xPos = colorPickerX + pureG * 32 / 255;
+        } else if (pureG == 255 && pureB == 0) {
+            // Yellow to Green (32-64): R=255-0, G=255, B=0
+            xPos = colorPickerX + 32 + (255 - pureR) * 32 / 255;
+        } else if (pureG == 255 && pureR == 0) {
+            // Green to Cyan (64-96): R=0, G=255, B=0-255
+            xPos = colorPickerX + 64 + pureB * 32 / 255;
+        } else if (pureB == 255 && pureR == 0) {
+            // Cyan to Blue (96-128): R=0, G=255-0, B=255
+            xPos = colorPickerX + 96 + (255 - pureG) * 32 / 255;
+        } else if (pureB == 255 && pureG == 0) {
+            // Blue to Magenta (128-160): R=0-255, G=0, B=255
+            xPos = colorPickerX + 128 + pureR * 32 / 255;
+        } else if (pureR == 255 && pureG == 0) {
+            // Magenta to Red (160-192): R=255, G=0, B=255-0
+            xPos = colorPickerX + 160 + (255 - pureB) * 32 / 255;
+        }
+        
+        // Clamp and set
+        colorX = Math.max(colorPickerX, Math.min(xPos, colorPickerX + 222));
+        colorY = Math.max(colorPickerY, Math.min(yPos, colorPickerY + 191));
+        
+        // Handle special positions for gray column
+        if(colorX >= colorPickerX + 191 && colorX <= colorPickerX + 194)
+            colorX = colorPickerX + 191;
+        if(colorX >= colorPickerX + 195 && colorX <= colorPickerX + 197)
+            colorX = colorPickerX + 197;
+    }
+    
+    private void updateTextFields()
+    {
+        if (colorR != -1) rField.setText(String.valueOf(colorR));
+        if (colorG != -1) gField.setText(String.valueOf(colorG));
+        if (colorB != -1) bField.setText(String.valueOf(colorB));
     }
 
     private int rgbNum(int r, int g, int b)
