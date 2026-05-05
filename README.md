@@ -39,7 +39,7 @@ src/RayCasting/
 ├── Spiral.java          # Spiral sprite generator
 ├── CreatePoints.java    # 3D point file creation
 ├── PointsFile.java      # Point cloud data structure
-├── TextureCreator.java  # Texture editing tool
+├── TextureEditor.java   # Texture editing tool
 ├── Vector2D.java        # 2D vector math
 └── Vector3D.java        # 3D vector math
 ```
