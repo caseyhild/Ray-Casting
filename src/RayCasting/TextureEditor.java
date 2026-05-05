@@ -1,16 +1,17 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import javax.swing.*;
 
-public class TextureCreator extends JPanel implements ActionListener, MouseListener, MouseMotionListener
+public class TextureEditor extends JPanel implements ActionListener, MouseListener, MouseMotionListener
 {
     Timer tm = new Timer(1, this);
     private static final int width = 900;
     private static final int height = 512;
     private final int size = 64;
+    private final int cellSize = height / size;  // 512 / 64 = 8 pixels per cell
     private final int[][] pixels = new int[size][size];
     private int colorR = -1;
     private int colorG = -1;
@@ -29,6 +30,8 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
     private int y1 = -1;
     private int x2 = -1;
     private int y2 = -1;
+    private int startCellX = -1;  // Track the original starting cell
+    private int startCellY = -1;
     private boolean drawCopyText = false;
     private int copyTextWidth = 0;
     private int copyTextHeight = 0;
@@ -42,8 +45,9 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
     private boolean clickedRecent = false;
     private int mouseX;
     private int mouseY;
+    private static final int MOUSE_Y_OFFSET = -2;  // Offset to account for panel border/insets
 
-    public TextureCreator()
+    public TextureEditor()
     {
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -264,15 +268,21 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
         if(drawingMode.equals("Copy"))
         {
             g.setColor(new Color(128, 128, 128, 128));
-            g.fillRect(x1, y1, x2 - x1, y2 - y1);
+            int minX = Math.min(x1, x2);
+            int minY = Math.min(y1, y2);
+            int maxX = Math.max(x1, x2);
+            int maxY = Math.max(y1, y2);
+            g.fillRect(minX, minY, maxX - minX, maxY - minY);
             if(drawCopyText)
             {
+                int centerX = (minX + maxX) / 2;
+                int centerY = (minY + maxY) / 2;
                 g.setColor(new Color(255, 255, 255));
-                g.fillRoundRect((x2 - x1)/2 + x1 - (10 + fm.stringWidth("Copy"))/2, (y2 - y1)/2 + y1 - (fm.getAscent() + 4)/2, 10 + fm.stringWidth("Copy"), fm.getAscent() + 4, 10, 10);
+                g.fillRoundRect(centerX - (10 + fm.stringWidth("Copy"))/2, centerY - (fm.getAscent() + 4)/2, 10 + fm.stringWidth("Copy"), fm.getAscent() + 4, 10, 10);
                 g.setColor(new Color(0, 0, 0));
-                g.drawRoundRect((x2 - x1)/2 + x1 - (10 + fm.stringWidth("Copy"))/2, (y2 - y1)/2 + y1 - (fm.getAscent() + 4)/2, 10 + fm.stringWidth("Copy"), fm.getAscent() + 4, 10, 10);
+                g.drawRoundRect(centerX - (10 + fm.stringWidth("Copy"))/2, centerY - (fm.getAscent() + 4)/2, 10 + fm.stringWidth("Copy"), fm.getAscent() + 4, 10, 10);
                 g.setColor(new Color(0, 0, 0));
-                g.drawString("Copy", (x2 - x1)/2 + x1 - fm.stringWidth("Copy")/2, (y2 - y1)/2 + y1 + fm.getAscent()/2 - 2);
+                g.drawString("Copy", centerX - fm.stringWidth("Copy")/2, centerY + fm.getAscent()/2 - 2);
                 copyTextWidth = 10 + fm.stringWidth("Copy");
                 copyTextHeight = fm.getAscent() + 4;
             }
@@ -290,10 +300,10 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
             {
                 pasteWidth = copy.length;
                 pasteHeight = copy[0].length;
-                pasteX = Math.max(0, Math.min((mouseX + adjustx)/8 - pasteWidth/2, size - pasteWidth));
-                pasteY = Math.max(0, Math.min((mouseY + adjusty)/8 - pasteHeight/2, size - pasteHeight));
+                pasteX = Math.max(0, Math.min((mouseX + adjustx)/cellSize - pasteWidth/2, size - pasteWidth));
+                pasteY = Math.max(0, Math.min((mouseY + adjusty)/cellSize - pasteHeight/2, size - pasteHeight));
             }
-            g.fillRect(8 * pasteX, 8 * pasteY, 8 * pasteWidth, 8 * pasteHeight);
+            g.fillRect(cellSize * pasteX, cellSize * pasteY, cellSize * pasteWidth, cellSize * pasteHeight);
         }
         g.setColor(new Color(255, 255, 255));
         g.fillRoundRect(width - 100, height - 100, 90, 90, 16, 16);
@@ -442,9 +452,27 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
                     }
                 }
                 case "Copy" -> {
-                    if (drawCopyText && mouseX > (x2 - x1) / 2 + x1 - copyTextWidth / 2 && mouseX < (x2 - x1) / 2 + x1 + copyTextWidth / 2 && mouseY > (y2 - y1) / 2 + y1 - copyTextHeight / 2 && mouseY < (y2 - y1) / 2 + y1 + copyTextHeight / 2)
-                        copy();
-                    else {
+                    if (drawCopyText) {
+                        int minX = Math.min(x1, x2);
+                        int minY = Math.min(y1, y2);
+                        int maxX = Math.max(x1, x2);
+                        int maxY = Math.max(y1, y2);
+                        int centerX = (minX + maxX) / 2;
+                        int centerY = (minY + maxY) / 2;
+                        if (mouseX > centerX - copyTextWidth / 2 && mouseX < centerX + copyTextWidth / 2 && 
+                            mouseY > centerY - copyTextHeight / 2 && mouseY < centerY + copyTextHeight / 2)
+                            copy();
+                        else {
+                            startCellX = -1;
+                            startCellY = -1;
+                            x1 = -1;
+                            y1 = -1;
+                            x2 = -1;
+                            y2 = -1;
+                        }
+                    } else {
+                        startCellX = -1;
+                        startCellY = -1;
                         x1 = -1;
                         y1 = -1;
                         x2 = -1;
@@ -511,16 +539,60 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
 
     public void mousePressed(MouseEvent me)
     {
+        mouseX = me.getX();
+        mouseY = me.getY() + MOUSE_Y_OFFSET;
+        
         if(drawingMode.equals("Copy"))
         {
-            if(drawCopyText && mouseX > (x2 - x1)/2 + x1 - copyTextWidth/2 && mouseX < (x2 - x1)/2 + x1 + copyTextWidth/2 && mouseY > (y2 - y1)/2 + y1 - copyTextHeight/2 && mouseY < (y2 - y1)/2 + y1 + copyTextHeight/2)
-                copy();
-            else
-            {
-                x1 = -1;
-                y1 = -1;
-                x2 = -1;
-                y2 = -1;
+            if(drawCopyText) {
+                int minX = Math.min(x1, x2);
+                int minY = Math.min(y1, y2);
+                int maxX = Math.max(x1, x2);
+                int maxY = Math.max(y1, y2);
+                int centerX = (minX + maxX) / 2;
+                int centerY = (minY + maxY) / 2;
+                if (mouseX > centerX - copyTextWidth / 2 && mouseX < centerX + copyTextWidth / 2 && 
+                    mouseY > centerY - copyTextHeight / 2 && mouseY < centerY + copyTextHeight / 2)
+                    copy();
+                else {
+                    // Start new selection - get the cell the mouse is in
+                    if(mouseX >= 0 && mouseX < height && mouseY >= 0 && mouseY < height) {
+                        // Store the starting cell position
+                        startCellX = (mouseX / cellSize) * cellSize;
+                        startCellY = (mouseY / cellSize) * cellSize;
+                        // Initially select just this one cell
+                        x1 = startCellX;
+                        y1 = startCellY;
+                        x2 = startCellX + cellSize;
+                        y2 = startCellY + cellSize;
+                    } else {
+                        startCellX = -1;
+                        startCellY = -1;
+                        x1 = -1;
+                        y1 = -1;
+                        x2 = -1;
+                        y2 = -1;
+                    }
+                }
+            } else {
+                // Start new selection - get the cell the mouse is in
+                if(mouseX >= 0 && mouseX < height && mouseY >= 0 && mouseY < height) {
+                    // Store the starting cell position
+                    startCellX = (mouseX / cellSize) * cellSize;
+                    startCellY = (mouseY / cellSize) * cellSize;
+                    // Initially select just this one cell
+                    x1 = startCellX;
+                    y1 = startCellY;
+                    x2 = startCellX + cellSize;
+                    y2 = startCellY + cellSize;
+                } else {
+                    startCellX = -1;
+                    startCellY = -1;
+                    x1 = -1;
+                    y1 = -1;
+                    x2 = -1;
+                    y2 = -1;
+                }
             }
         }
         drawCopyText = false;
@@ -537,7 +609,7 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
     public void mouseDragged(MouseEvent me)
     {
         mouseX = me.getX();
-        mouseY = me.getY();
+        mouseY = me.getY() + MOUSE_Y_OFFSET;
         if(mouseX >= colorPickerX + 191 && mouseX <= colorPickerX + 194)
             mouseX = colorPickerX + 191;
         if(mouseX >= colorPickerX + 195 && mouseX <= colorPickerX + 197)
@@ -646,14 +718,58 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
                     }
                 }
                 case "Copy" -> {
-                    if (x1 == -1)
-                        x1 = 8 * (int) (mouseX / 8.0);
-                    if (y1 == -1)
-                        y1 = 8 * (int) (mouseY / 8.0);
-                    x2 = 8 * (int) (mouseX / 8.0 + 1);
-                    y2 = 8 * (int) (mouseY / 8.0 + 1);
-                    if (drawCopyText && mouseX > (x2 - x1) / 2 + x1 - copyTextWidth / 2 && mouseX < (x2 - x1) / 2 + x1 + copyTextWidth / 2 && mouseY > (y2 - y1) / 2 + y1 - copyTextHeight / 2 && mouseY < (y2 - y1) / 2 + y1 + copyTextHeight / 2)
-                        copy();
+                    if (startCellX == -1) {
+                        // Store the starting cell position
+                        // Clamp mouseX/mouseY to valid drawing area
+                        int clampedX = Math.max(0, Math.min(mouseX, height - 1));
+                        int clampedY = Math.max(0, Math.min(mouseY, height - 1));
+                        startCellX = (clampedX / cellSize) * cellSize;
+                        startCellY = (clampedY / cellSize) * cellSize;
+                        x1 = startCellX;
+                        y1 = startCellY;
+                        x2 = startCellX + cellSize;
+                        y2 = startCellY + cellSize;
+                    } else {
+                        // Get the current cell
+                        // Clamp mouseX/mouseY to valid drawing area
+                        int clampedX = Math.max(0, Math.min(mouseX, height - 1));
+                        int clampedY = Math.max(0, Math.min(mouseY, height - 1));
+                        int cellX = (clampedX / cellSize) * cellSize;
+                        int cellY = (clampedY / cellSize) * cellSize;
+                        
+                        // Calculate selection bounds based on starting cell and current cell
+                        if (cellX < startCellX) {
+                            // Dragging left
+                            x1 = cellX;
+                            x2 = startCellX + cellSize;
+                        } else {
+                            // Dragging right
+                            x1 = startCellX;
+                            x2 = cellX + cellSize;
+                        }
+                        
+                        if (cellY < startCellY) {
+                            // Dragging up
+                            y1 = cellY;
+                            y2 = startCellY + cellSize;
+                        } else {
+                            // Dragging down
+                            y1 = startCellY;
+                            y2 = cellY + cellSize;
+                        }
+                    }
+                    
+                    if (drawCopyText) {
+                        int minX = Math.min(x1, x2);
+                        int minY = Math.min(y1, y2);
+                        int maxX = Math.max(x1, x2);
+                        int maxY = Math.max(y1, y2);
+                        int centerX = (minX + maxX) / 2;
+                        int centerY = (minY + maxY) / 2;
+                        if (mouseX > centerX - copyTextWidth / 2 && mouseX < centerX + copyTextWidth / 2 && 
+                            mouseY > centerY - copyTextHeight / 2 && mouseY < centerY + copyTextHeight / 2)
+                            copy();
+                    }
                 }
                 case "Paste" -> {
                     if (copy.length > 0 && pasteWidth > 0 && pasteHeight > 0)
@@ -706,7 +822,7 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
     public void mouseMoved(MouseEvent me)
     {
         mouseX = me.getX();
-        mouseY = me.getY();
+        mouseY = me.getY() + MOUSE_Y_OFFSET;
     }
 
     private void saveTexture() throws IOException
@@ -730,12 +846,20 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
 
     private void copy()
     {
-        pasteWidth = x2/8 - x1/8;
-        pasteHeight = y2/8 - y1/8;
-        copy = new int[pasteWidth][pasteHeight];
-        for(int x = 0; x < pasteWidth; x++)
-        {
-            System.arraycopy(pixels[x + x1 / 8], y1 / 8, copy[x], 0, pasteHeight);
+        int minX = Math.min(x1, x2);
+        int minY = Math.min(y1, y2);
+        int maxX = Math.max(x1, x2);
+        int maxY = Math.max(y1, y2);
+        
+        pasteWidth = (maxX - minX) / cellSize;
+        pasteHeight = (maxY - minY) / cellSize;
+        
+        if(pasteWidth > 0 && pasteHeight > 0) {
+            copy = new int[pasteWidth][pasteHeight];
+            for(int x = 0; x < pasteWidth; x++)
+            {
+                System.arraycopy(pixels[x + minX / cellSize], minY / cellSize, copy[x], 0, pasteHeight);
+            }
         }
     }
 
@@ -791,14 +915,15 @@ public class TextureCreator extends JPanel implements ActionListener, MouseListe
 
     public static void main(String[] args)
     {
-        TextureCreator tc = new TextureCreator();
+        TextureEditor te = new TextureEditor();
+        te.setPreferredSize(new Dimension(width, height));
         JFrame jf = new JFrame();
-        jf.setTitle("Texture Creator");
-        jf.setSize(width + 6, height + 29);
+        jf.setTitle("Texture Editor");
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jf.setResizable(false);
+        jf.add(te);
+        jf.pack();
         jf.setLocationRelativeTo(null);
-        jf.add(tc);
         jf.setVisible(true);
     }
 }
