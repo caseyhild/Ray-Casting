@@ -47,7 +47,7 @@ src/RayCasting/
 
 ## Screenshots
 
-<img width="450" alt="Screenshot 2026-05-04 at 11 45 34 PM" src="https://github.com/user-attachments/assets/f0df6f95-c0f5-4c99-afeb-b1b25ee399c6" />
-<img width="450" alt="Screenshot 2026-05-04 at 11 45 12 PM" src="https://github.com/user-attachments/assets/a2c10f06-b6a8-4321-9a55-375374102c6d" />
-<img width="450" alt="Screenshot 2026-05-04 at 11 42 18 PM" src="https://github.com/user-attachments/assets/530b7f87-60a2-4eff-a515-1257264cf2a0" />
-<img width="450" alt="Screenshot 2026-05-04 at 11 43 10 PM" src="https://github.com/user-attachments/assets/1468f3d0-b06f-4949-8580-a7f9c5afb263" />
+<img width="440" alt="Screenshot 2026-05-04 at 11 45 34 PM" src="https://github.com/user-attachments/assets/f0df6f95-c0f5-4c99-afeb-b1b25ee399c6" />
+<img width="440" alt="Screenshot 2026-05-04 at 11 45 12 PM" src="https://github.com/user-attachments/assets/a2c10f06-b6a8-4321-9a55-375374102c6d" />
+<img width="440" alt="Screenshot 2026-05-04 at 11 42 18 PM" src="https://github.com/user-attachments/assets/530b7f87-60a2-4eff-a515-1257264cf2a0" />
+<img width="440" alt="Screenshot 2026-05-04 at 11 43 10 PM" src="https://github.com/user-attachments/assets/1468f3d0-b06f-4949-8580-a7f9c5afb263" />
