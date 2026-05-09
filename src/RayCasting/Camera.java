@@ -61,7 +61,15 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
         mouseDeltaX = 0;
         prevMouseX = winWidth / 2;
         skipMoveEvents = 0;
-        try { robot = new Robot(); } catch (AWTException ignored) { robot = null; }
+        try { 
+            robot = new Robot();
+            robot.setAutoDelay(0);
+            robot.setAutoWaitForIdle(false);
+        } catch (AWTException e) { 
+            System.err.println("Warning: Robot initialization failed. Mouse warping may not work.");
+            System.err.println("On macOS, you may need to grant Accessibility permissions in System Preferences.");
+            robot = null; 
+        }
         warpTargetX = Toolkit.getDefaultToolkit().getScreenSize().width / 2;
         warpTargetY = Toolkit.getDefaultToolkit().getScreenSize().height / 2;
     }
@@ -153,11 +161,15 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
     public void mouseExited(MouseEvent me)
     {
         if (robot != null) {
-            robot.mouseMove(warpTargetX, warpTargetY);
-            mouseX = winWidth / 2;
-            prevMouseX = winWidth / 2;
-            prevMouseY = winHeight / 2;
-            skipMoveEvents = 2;
+            try {
+                robot.mouseMove(warpTargetX, warpTargetY);
+                mouseX = winWidth / 2;
+                prevMouseX = winWidth / 2;
+                prevMouseY = winHeight / 2;
+                skipMoveEvents = 2;
+            } catch (Exception e) {
+                System.err.println("Warning: Mouse warp failed in mouseExited: " + e.getMessage());
+            }
         }
     }
 
@@ -323,11 +335,15 @@ public class Camera implements MouseListener, MouseMotionListener, KeyListener
         //warp cursor back to center when near the edge
         if (mouseX < winWidth / 8 || mouseX > winWidth * 7 / 8 || mouseY < winHeight / 8 || mouseY > winHeight * 7 / 8) {
             if (robot != null) {
-                robot.mouseMove(warpTargetX, warpTargetY);
-                mouseX = winWidth / 2;
-                prevMouseX = winWidth / 2;
-                prevMouseY = winHeight / 2;
-                skipMoveEvents = 2;
+                try {
+                    robot.mouseMove(warpTargetX, warpTargetY);
+                    mouseX = winWidth / 2;
+                    prevMouseX = winWidth / 2;
+                    prevMouseY = winHeight / 2;
+                    skipMoveEvents = 2;
+                } catch (Exception e) {
+                    System.err.println("Warning: Mouse warp failed: " + e.getMessage());
+                }
             }
         }
 

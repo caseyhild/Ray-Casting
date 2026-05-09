@@ -22,7 +22,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Fjs7zN54OtcBVpuWIoSCRYxLqB5MpTZ2WEOrFfeY774=
+			n1hTsIS8cgjoBjKvrng5zfbx+gGbFctRSeMrKcNbzMw=
 			</data>
 		</dict>
 		<key>app/.git/FETCH_HEAD</key>
@@ -155,7 +155,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			bkzZPWxjpesGDacyiSFZb/BDA0do5JA2DBLL0XYuqwg=
+			HhkZ937uEfa4SzBJg/yMh2Qd94LEGPHcXY4pWqGJaH4=
 			</data>
 		</dict>
 		<key>app/.git/info/exclude</key>
@@ -169,14 +169,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Z8JtdvD9cbKIPqmO0SUhvsnkmnVzBY0ioj9jBF01OjQ=
+			dxZKkRrdaFsYFAfnyv00Tl2djNpnYfihR/UlVraPwiw=
 			</data>
 		</dict>
 		<key>app/.git/logs/refs/heads/main</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Z8JtdvD9cbKIPqmO0SUhvsnkmnVzBY0ioj9jBF01OjQ=
+			dxZKkRrdaFsYFAfnyv00Tl2djNpnYfihR/UlVraPwiw=
 			</data>
 		</dict>
 		<key>app/.git/logs/refs/remotes/origin/HEAD</key>
@@ -190,7 +190,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			7fxBSuIOfq0Q4+wSfVdVJy1PMizVLcA96K667yagrLQ=
+			TCumY8uslz/wBz50A/xK4iBQYfpw62WbrnRGIqq7jRI=
 			</data>
 		</dict>
 		<key>app/.git/objects/00/107a3272542cc06e7ebc9df3a8b4777f3e61b2</key>
@@ -226,6 +226,13 @@
 			<key>hash2</key>
 			<data>
 			hsqFspdQtHocC1qiGjZQLJNBUo36XSXDUPuFMSZba94=
+			</data>
+		</dict>
+		<key>app/.git/objects/02/ed45165b4638c8ce13d34e572627742a10bbcd</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			E73enst8OGycPuJqMyt7a5CAbxHOQaxn8GjPWStwDdk=
 			</data>
 		</dict>
 		<key>app/.git/objects/03/2cf92a644be5472e4f5bc8ae44d142ff41b5b5</key>
@@ -324,6 +331,13 @@
 			<key>hash2</key>
 			<data>
 			edNw/d1+p+EOJbQH4AIg8sZRk4FPy/vOdBHuOQElSxo=
+			</data>
+		</dict>
+		<key>app/.git/objects/09/6875a2f8880905f1e8caf24f2795f25b05beb6</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			rMZXoXdnyYVJ72/noEueAlW8NMvsMCZFOKN5vnZmfso=
 			</data>
 		</dict>
 		<key>app/.git/objects/09/6a9c1cc09f098c917abe0af7500f08505180c8</key>
@@ -697,6 +711,13 @@
 			RUz/fJ6Ng3JVYmwHs8y7n0ug00J/9MVXy38oqB7uG1c=
 			</data>
 		</dict>
+		<key>app/.git/objects/1e/15cf27c6325285464c523dec3df32655f20fcb</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			q3JZltxCE/LbfC1f9oVKLuTjQTC75Ag8OgBsagv4t2c=
+			</data>
+		</dict>
 		<key>app/.git/objects/1e/4a1466b689bc0aa584e5e5af480cf0a4dd3dd9</key>
 		<dict>
 			<key>hash2</key>
@@ -921,6 +942,13 @@
 			lvsFw/B0Bdk2+clapPEq2c6SRFppwFhuegRggN7Ibhc=
 			</data>
 		</dict>
+		<key>app/.git/objects/2b/3b622f6fe4298c5753ada08a6f377d502ee477</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AO6l2qzTFccaJb2hPngLcr9d+wUKK4IaaNL9e82O9LI=
+			</data>
+		</dict>
 		<key>app/.git/objects/2b/63946d5b31084bbb7dda418ceb3d75eb686373</key>
 		<dict>
 			<key>hash2</key>
@@ -996,6 +1024,13 @@
 			<key>hash2</key>
 			<data>
 			HKKQI9T5ZmK9zIXXqdZwgRnzVrC/41t+b4TrKk+4FEM=
+			</data>
+		</dict>
+		<key>app/.git/objects/2c/b820c7c1fcb3fb86f7889099ee394b962ace40</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			zz+LJkXXRgDlmHkpfV1Y2jDCrwZ4e+bzH0Mn5fZnHGM=
 			</data>
 		</dict>
 		<key>app/.git/objects/2c/bbe472ed58fa2108a609bf38bf25e8ee8fbc39</key>
@@ -1166,6 +1201,13 @@
 			ZI+VBbm9rqR1P5cQVfXfuUnt53dxdofRAJoJdf84/AA=
 			</data>
 		</dict>
+		<key>app/.git/objects/32/b7a1fe49f8b54361098c2c3c289380e8c4162c</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			iLREEaHUL4IRmZ1/9yH2coV1IibFUqWQ7KbT8gliKz0=
+			</data>
+		</dict>
 		<key>app/.git/objects/33/0b1640d6596d5c5f1ea40c3d52806c9ba53a70</key>
 		<dict>
 			<key>hash2</key>
@@ -1229,6 +1271,13 @@
 			UfpR4DH7ZX3Odvdj4OUspZToxKHykfiOeLj8R/jh2Kg=
 			</data>
 		</dict>
+		<key>app/.git/objects/37/cce005727e91b298f02d6d7a1630b6f54e3a8d</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2aeXgfuN6iaaEtn1/nRYaSDIvs6XL37Q4UkxxpYPFk0=
+			</data>
+		</dict>
 		<key>app/.git/objects/37/e826d10b353441bebb29a98eb78ffacd083284</key>
 		<dict>
 			<key>hash2</key>
@@ -1269,6 +1318,13 @@
 			<key>hash2</key>
 			<data>
 			IJPXjeswW5P9rmsO2j/7+4aGdwTMp9V9hPVYAEicATo=
+			</data>
+		</dict>
+		<key>app/.git/objects/3a/fd242a588e881a3bbb99cf40a8832e3820c09d</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			y400uvcVuseoCXLjV6J7DEIjvRqXMNNH52z6JtPdfms=
 			</data>
 		</dict>
 		<key>app/.git/objects/3b/a59f8264a68dfde841461d65def0a69e1556d0</key>
@@ -1381,6 +1437,13 @@
 			<key>hash2</key>
 			<data>
 			ViI+suWMk8L0Z8mo0eeU5KfEo620ciO5qSAJUPs+0hU=
+			</data>
+		</dict>
+		<key>app/.git/objects/40/4ee0d18ad2079ccba548cc4069e674f3aee0aa</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			OMuHXuomzcjqIzI+pKSBnLdGVUsa9AKwtv4MjSm5ka0=
 			</data>
 		</dict>
 		<key>app/.git/objects/40/5bd55f26882d954c90e73d3a622959de3d97a1</key>
@@ -1705,6 +1768,13 @@
 			PXO1MSCMNgOgA+1gAW/ScoU0BfXIrHSN+xI4WbB+Wmo=
 			</data>
 		</dict>
+		<key>app/.git/objects/52/0a7639a3665dcea08f29a2f4c16de621ed7872</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			PzVOUzC8HRlyYxwPFLFIV5EtQAT6cY9blkrIdYGHvcQ=
+			</data>
+		</dict>
 		<key>app/.git/objects/52/36ecfb349f27ae58fb3714b391540c037b98e7</key>
 		<dict>
 			<key>hash2</key>
@@ -1817,6 +1887,13 @@
 			DI0zpMJXlQDyf988musLM6xuiB50bpGShni7zdFaua0=
 			</data>
 		</dict>
+		<key>app/.git/objects/59/628348b444d0bcf950d0cc47f7a88da804931e</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			DujSAEO+KIGGN+Uz2IYF00i0Ee7Wj91WDoaCzeeIWiE=
+			</data>
+		</dict>
 		<key>app/.git/objects/59/e8eee168b5922df73ed76d0d0f612856c318f3</key>
 		<dict>
 			<key>hash2</key>
@@ -1892,6 +1969,13 @@
 			<key>hash2</key>
 			<data>
 			llzJOexPUlwpOQgsnJfsEQy32VEhDU1FzgJouOxyAZI=
+			</data>
+		</dict>
+		<key>app/.git/objects/5e/9c8115996876455e24dd7b80cd5ca54172b9be</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			kYn93PCcxIiMXd/pRlwFtJqUCc/MoyynGPrAwx+LrGk=
 			</data>
 		</dict>
 		<key>app/.git/objects/5e/b51e76f8e56cfb916ccdc28488ca121a7c61df</key>
@@ -2363,6 +2447,13 @@
 			D5RnMHQs6+lpe0pPeTwQ0uTC0+hi4Nlfd28sYASuUlM=
 			</data>
 		</dict>
+		<key>app/.git/objects/73/a27d24f95a6a58a46678f32346c2def64a4e41</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			uTewHXFQy2a4eLmX/ENsxxnEPaki9XlHf+OqqVpa9xY=
+			</data>
+		</dict>
 		<key>app/.git/objects/73/b6b306d8a886008647a118feac53c357ed92f8</key>
 		<dict>
 			<key>hash2</key>
@@ -2790,6 +2881,13 @@
 			oIYwPmGyHrOuxbTc97rimuwy2fILL0g4Ma819sS6egw=
 			</data>
 		</dict>
+		<key>app/.git/objects/86/381c09a7562ef97f1e41b132555205720e94e5</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ufHdQD+tcC2gHn10ndwS+PxenTqt/CDqBz20Cp55gDE=
+			</data>
+		</dict>
 		<key>app/.git/objects/86/756180d0496c20ed77959e76e711c403968be4</key>
 		<dict>
 			<key>hash2</key>
@@ -2907,6 +3005,20 @@
 			<key>hash2</key>
 			<data>
 			OeoUi3UG5zBB08KOs5GK61mvWVOAYmPWgO1nIDc/lJg=
+			</data>
+		</dict>
+		<key>app/.git/objects/89/fc1c03fd5fefe5b19808f795bcdfe7c87cbbbd</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			5ky65YDUjROH3EZnTzfXie3fUkVZVPVRlaaICIKi9KU=
+			</data>
+		</dict>
+		<key>app/.git/objects/8a/24d9f0c85e82e38b5ae1e57b450a5689e71a6a</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			DoiazIkY47VyBsMNEAfnuIMErd7aBjArMcs3d9otq18=
 			</data>
 		</dict>
 		<key>app/.git/objects/8a/385b7550bf6ced28fdb8491cc691cf28496153</key>
@@ -3117,6 +3229,13 @@
 			<key>hash2</key>
 			<data>
 			T0dX1euN2PuPUjMARPTrzCf8Yvqcrfwz5VVrR5gMURw=
+			</data>
+		</dict>
+		<key>app/.git/objects/92/488b15bc0dd66774719aeaddd1d7e4aa310afa</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/WtlOPRmndii9al4zN5btxAm9vcAAXGnHhQo3l1sZRc=
 			</data>
 		</dict>
 		<key>app/.git/objects/92/c8e12c8b651f337fa2cbf735031a9d6599a688</key>
@@ -3749,6 +3868,13 @@
 			Y8qeXS3Og/MLefMvbskFy1TbnzvWrXhlVt4CxIyK8wY=
 			</data>
 		</dict>
+		<key>app/.git/objects/b1/2e702c429e806449a28727a58ebfa74e7a3c78</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			tbJc4WFUraAE2dEiP2mjZgQaYIgJBo/zQAKNvigf0p0=
+			</data>
+		</dict>
 		<key>app/.git/objects/b1/a49b57f9cf541b5fb3e4920ff70eedeb50ec2a</key>
 		<dict>
 			<key>hash2</key>
@@ -4232,6 +4358,13 @@
 			pURfpUDU2ITvjjV/a9Uhzfc2Oc6qKT0wmoL5eWQy/4A=
 			</data>
 		</dict>
+		<key>app/.git/objects/cd/99827a23b10763284a5e9af557fa2ebcece83a</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			s40sLH/6lhe6e9hn5OoEZ3ocYUotijlG99oXhHfyJm8=
+			</data>
+		</dict>
 		<key>app/.git/objects/cd/aa1acb2930bff36dce3622b207ed8d9dc40290</key>
 		<dict>
 			<key>hash2</key>
@@ -4307,6 +4440,13 @@
 			<key>hash2</key>
 			<data>
 			SRMKmy1l1HbTc/sWQfroDa+b+wQFbWPFujBov35ax0o=
+			</data>
+		</dict>
+		<key>app/.git/objects/d4/2c55eec4e321fc5822902b7341e5d2d23ab101</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CVOa4W0oCcbbrC7BfV61PpyvDWhxihG94N/2LQSgkbA=
 			</data>
 		</dict>
 		<key>app/.git/objects/d5/0049c7f491e649cae6b06569fca7da3b383979</key>
@@ -4517,6 +4657,13 @@
 			<key>hash2</key>
 			<data>
 			pQr/DJ4S38LPthyBPWH3z5a7hD495re3aN96KN3whQU=
+			</data>
+		</dict>
+		<key>app/.git/objects/e1/1a13ad8250804ded5c695ca2b4fe0839390462</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			vimk7PiKlhPm40MqSoZfyjaCbv+93FGnpvwWauvsS5M=
 			</data>
 		</dict>
 		<key>app/.git/objects/e1/3ddc48cd528f0b3bccc861fce560024c19bbb6</key>
@@ -4932,6 +5079,13 @@
 			+IrIkBwoBqv8sBcMrxmNsqT3AWu68/NdGwhYUf7P7gw=
 			</data>
 		</dict>
+		<key>app/.git/objects/f5/56d1bad8e29a41dbf1830103cfad7dd4568e92</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			61oCGjiL2MmqMSPb3MuX7X6uocCIipZlK9QQaIUkDN8=
+			</data>
+		</dict>
 		<key>app/.git/objects/f5/c4458e2c2008ad8c6183e6c6f2fe92204ef225</key>
 		<dict>
 			<key>hash2</key>
@@ -5153,7 +5307,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			q1QYK+p6QANS3FjYA5DLs/iP5U79SbYQCWoSoizADC8=
+			USSmS89zlqk3iZyryRL1wN1KsQ1y+dPUH3JdHCoFZf4=
 			</data>
 		</dict>
 		<key>app/.git/refs/remotes/origin/HEAD</key>
@@ -5167,7 +5321,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			q1QYK+p6QANS3FjYA5DLs/iP5U79SbYQCWoSoizADC8=
+			USSmS89zlqk3iZyryRL1wN1KsQ1y+dPUH3JdHCoFZf4=
 			</data>
 		</dict>
 		<key>app/.jpackage.xml</key>
@@ -5175,6 +5329,13 @@
 			<key>hash2</key>
 			<data>
 			xr2jwyefE7yvX4//RlnSQRIkzk/a1xdZVWc4onbfW5M=
+			</data>
+		</dict>
+		<key>app/BUILD_SUMMARY.md</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EVbUOtgfKSnE6IvInpKCUKH7PzTDnx0nxsU3lJKmQnI=
 			</data>
 		</dict>
 		<key>app/README.md</key>
@@ -5195,7 +5356,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Rz0ufGt7Zbx0esD6HhxSSzbiczqKlPS/p75UsgB44Q8=
+			+O7niCZb7G2qVx9dov0xanawvLJ1m2wTbYEAhuZzIds=
 			</data>
 		</dict>
 		<key>app/RayCasting.app/Contents/PkgInfo</key>
@@ -5216,7 +5377,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			yhDLEyJnGjmeU8tpnT6ZfmiiQW1/ngp1iccPB0VtGp4=
+			4l5COIvbo6fn/bCm1KeqYroyB6doi8faUbQq0mWnqQY=
 			</data>
 		</dict>
 		<key>app/RayCasting.app/Contents/app/RayCasting.cfg</key>
@@ -6681,7 +6842,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			bim64fGU5zZI6dM/sexDvWObcuKDgdo67cHZBX0EvH4=
+			kHXTst3R90GgY45Z14pI2XYaJK+fNWjVq3ljPWo8TmE=
 			</data>
 		</dict>
 		<key>app/RayCasting.app/Contents/runtime/Contents/Home/lib/psfont.properties.ja</key>
@@ -6765,14 +6926,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			w5CG9lCqL+LUprQ9o8mY0cOOIXm1Sc+2Vbu4bosumx8=
+			fVAwJGP2ZuVt9ZyyU71a/bPqodOhZ8gp4iN9jKKFA4s=
 			</data>
 		</dict>
 		<key>app/RayCasting.app/Contents/runtime/Contents/_CodeSignature/CodeResources</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			9PN6WltPMX+O8GNiGj6wvqKRn1UloZby96/jFnvMhyU=
+			f1aHC6EdaHuF1Yxj3PuZR1dT8Znv7l8TbCUULYaoQ10=
 			</data>
 		</dict>
 		<key>app/RayCasting.cfg</key>
@@ -6793,7 +6954,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			r4sKvoDj1sKggRKnMrv/asGoYPVRE5w5IzeTEUoWxOE=
+			IXRhE8j/W3L7jWm/xDK7PJLHmXn2ER9BDXvecoVosho=
 			</data>
 		</dict>
 		<key>app/TextureEditor.icns</key>
@@ -6807,7 +6968,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			bH2+QgY681VnUihWj3pP0oi2pR7OMj4U1cMvpx62bM8=
+			d38j/qeIiQ9rDx07rIW3hOWfxx5oZQEFDUvRu7pvbKs=
+			</data>
+		</dict>
+		<key>app/entitlements.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			cy5gLioydwaa2VrIF0+r2dEuAY8Cte8iKqZoB0oV9uk=
 			</data>
 		</dict>
 		<key>app/resources/3DPoints/spiral.txt</key>
@@ -6870,7 +7038,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			6jIuI2JvShpmAqEZXbXSVa4iD2+7ouXwzymI7s1Umr4=
+			CrnpNrrDqyeOeTBoQJpWP3j3VLJesFexKTxN+aSpctI=
 			</data>
 		</dict>
 		<key>app/src/RayCasting/CreatePoints.java</key>
@@ -6891,7 +7059,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			VOT3QgqO/QU7tLHC1PnQaHYFDqnE0x5M7tx6leWFyCY=
+			h3wMu2uhfaJI3As+l2RYTaVbbW2+YCSCTZ89cb+Z1yQ=
 			</data>
 		</dict>
 		<key>app/src/RayCasting/Screen.java</key>
@@ -8426,7 +8594,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			bim64fGU5zZI6dM/sexDvWObcuKDgdo67cHZBX0EvH4=
+			kHXTst3R90GgY45Z14pI2XYaJK+fNWjVq3ljPWo8TmE=
 			</data>
 		</dict>
 		<key>runtime/Contents/Home/lib/psfont.properties.ja</key>
@@ -8510,14 +8678,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			w5CG9lCqL+LUprQ9o8mY0cOOIXm1Sc+2Vbu4bosumx8=
+			fVAwJGP2ZuVt9ZyyU71a/bPqodOhZ8gp4iN9jKKFA4s=
 			</data>
 		</dict>
 		<key>runtime/Contents/_CodeSignature/CodeResources</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			9PN6WltPMX+O8GNiGj6wvqKRn1UloZby96/jFnvMhyU=
+			f1aHC6EdaHuF1Yxj3PuZR1dT8Znv7l8TbCUULYaoQ10=
 			</data>
 		</dict>
 	</dict>

@@ -353,27 +353,58 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
         getContentPane().setCursor(blankCursor);
         pack();
         setLocationRelativeTo(null);
-        //warp cursor off screen before showing window so it's never visible
+        
+        // Test if Robot works and show message if it doesn't
+        boolean robotWorks = false;
         try {
-            Robot r = new Robot();
-            r.mouseMove(-100, -100);
-        } catch (AWTException ignored) {}
+            Robot testRobot = new Robot();
+            testRobot.setAutoDelay(0);
+            // Try a harmless mouse move to test permissions
+            Point currentPos = MouseInfo.getPointerInfo().getLocation();
+            testRobot.mouseMove(currentPos.x, currentPos.y);
+            robotWorks = true;
+        } catch (Exception e) {
+            System.err.println("WARNING: Robot/Mouse control not available!");
+            System.err.println("On macOS, you need to grant Accessibility permissions:");
+            System.err.println("1. Open System Preferences > Security & Privacy > Privacy");
+            System.err.println("2. Select 'Accessibility' from the left panel");
+            System.err.println("3. Click the lock icon and authenticate");
+            System.err.println("4. Add this application to the list and check the box");
+            System.err.println("5. Restart the application");
+            System.err.println("\nMouse look will not work properly without these permissions.");
+        }
+        
+        //warp cursor off screen before showing window so it's never visible
+        if (robotWorks) {
+            try {
+                Robot r = new Robot();
+                r.mouseMove(-100, -100);
+            } catch (AWTException ignored) {}
+        }
         setVisible(true);
         //set warp target, then warp to center after a short delay
         //so the glass pane cursor is fully applied before the cursor enters the window
-        try {
-            Point loc = getLocationOnScreen();
-            camera.setWarpTarget(loc.x + width / 2, loc.y + height / 2);
-            camera.warpCenter();
-            final int tx = loc.x + width / 2;
-            final int ty = loc.y + height / 2;
-            new Thread(() -> {
-                try {
-                    Thread.sleep(300);
-                    new Robot().mouseMove(tx, ty);
-                } catch (Exception ignored) {}
-            }).start();
-        } catch (Exception ignored) {}
+        if (robotWorks) {
+            try {
+                Point loc = getLocationOnScreen();
+                camera.setWarpTarget(loc.x + width / 2, loc.y + height / 2);
+                camera.warpCenter();
+                final int tx = loc.x + width / 2;
+                final int ty = loc.y + height / 2;
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(300);
+                        Robot r = new Robot();
+                        r.setAutoDelay(0);
+                        r.mouseMove(tx, ty);
+                    } catch (Exception e) {
+                        System.err.println("Failed to warp cursor: " + e.getMessage());
+                    }
+                }).start();
+            } catch (Exception e) {
+                System.err.println("Failed to set up cursor warping: " + e.getMessage());
+            }
+        }
         start();
     }
 

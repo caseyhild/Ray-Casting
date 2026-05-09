@@ -10,6 +10,7 @@ A 3D ray casting engine built in Java with multi-level environments, vertical ca
 - **Distance fog** - Atmospheric depth effects
 - **Point cloud sprites** - Complex structures rendered in the world from 3D point data
 - **Shooting mechanics** - Projectile system with depth testing
+- **Texture Editor** - Built-in tool for creating custom 64x64 textures
 
 ## Controls
 
@@ -17,53 +18,89 @@ A 3D ray casting engine built in Java with multi-level environments, vertical ca
 - **Mouse** - Look around
 - **Space** - Jump
 - **Left Click** - Shoot
+- **Escape** - Quit
 
 ## Running
 
-### From Source
-```bash
-cd src/RayCasting
-javac RayCasting.java
-java RayCasting
-```
-
-### From JAR Files
+### Option 1: JAR Files (Recommended)
 
 **Ray Casting Game:**
 ```bash
 java -jar RayCasting.jar
 ```
-Or simply double-click `RayCasting.jar`
 
 **Texture Editor:**
 ```bash
 java -jar TextureEditor.jar
 ```
-Or simply double-click `TextureEditor.jar`
 
-The JAR files are self-contained and will automatically extract required resources to a `resources/` folder on first run.
+✅ **Advantages:**
+- Works immediately, no setup required
+- No special permissions needed
+- Smaller file size (~63 KB each)
 
-### From macOS App Bundles
+⚠️ **Requirements:**
+- Java 11 or later must be installed
+
+### Option 2: macOS App Bundles
 
 **Ray Casting Game:**
-Double-click `RayCasting.app` or run:
 ```bash
 open RayCasting.app
 ```
+Or double-click `RayCasting.app` in Finder
 
 **Texture Editor:**
-Double-click `TextureEditor.app` or run:
 ```bash
 open TextureEditor.app
 ```
+Or double-click `TextureEditor.app` in Finder
 
-The .app bundles are fully self-contained and include:
-- Embedded Java runtime (no Java installation required)
-- Application JAR file
-- All resources (textures, 3D point data)
-- Native macOS launcher
+✅ **Advantages:**
+- No Java installation required (includes embedded runtime)
+- Native macOS integration with custom icons
+- Can be placed in Applications folder
 
-**Note:** The .app bundles are larger (~250-500 MB) because they include a complete Java runtime, but users can run them without any dependencies.
+⚠️ **First-Time Setup Required:**
+
+The app needs **Accessibility permissions** to control the mouse cursor for smooth camera movement. Without this, the cursor will get stuck at the edge of the screen.
+
+**To grant permissions:**
+
+1. Open **System Settings** (or **System Preferences** on older macOS)
+2. Go to **Privacy & Security** → **Accessibility**
+3. Click the **+** button (you may need to click the 🔒 lock icon first)
+4. Navigate to and select the `RayCasting.app` you downloaded
+5. Make sure the checkbox/toggle is **enabled**
+6. **Restart the app**
+
+**Note:** This is a one-time setup. The permission allows the app to keep the cursor centered for continuous mouse look.
+
+**Troubleshooting:**
+- If the cursor still gets stuck, make sure you fully quit (Cmd+Q) and restart the app
+- If you see a security warning, right-click the app → **Open** (first time only)
+- Alternatively, use the JAR file which doesn't require permissions
+
+### Option 3: From Source
+
+```bash
+cd src/RayCasting
+javac *.java
+java RayCasting
+```
+
+## Building from Source
+
+Use the included build script:
+```bash
+./build.sh
+```
+
+This will:
+1. Compile all Java source files
+2. Create JAR files with embedded resources
+3. Generate macOS app bundles with custom icons
+4. Apply necessary entitlements for accessibility permissions
 
 ## Texture Editor
 
@@ -83,19 +120,43 @@ The Texture Editor allows you to create and modify 64x64 textures for use in the
 - **Save/Load** - Save custom textures to `resources/SavedTextures/`
 
 ### Usage
-1. Select a color using the gradient picker or type RGB values
-2. Choose a brush size or drawing mode
-3. Click or drag on the 64x64 grid to draw
-4. Click SAVE to export your texture
+1. Launch `TextureEditor.jar` or `TextureEditor.app`
+2. Select a color using the gradient picker or type RGB values
+3. Choose a brush size or drawing mode
+4. Click or drag on the 64x64 grid to draw
+5. Click **SAVE** to export your texture
+
+Saved textures can be loaded in the main game by modifying the texture assignments in the code.
+
+## Technical Details
+
+### Resource Loading
+- All resources (textures, 3D point data) are embedded in the JAR files
+- Resources are read directly from the JAR using `getResourceAsStream()` - no extraction to disk
+- Works from any location without requiring the original project directory
+
+### Rendering
+- Multi-threaded parallel rendering pipeline for optimal performance
+- Ray casting algorithm with distance fog and lighting effects
+- Point cloud sprites for complex 3D objects
+
+### macOS Integration
+- Custom .icns icons for both applications
+- Embedded Java runtime (OpenJDK)
+- Entitlements configured for accessibility permissions
 
 ## Project Structure
 
 ```
 Ray-Casting/
-├── RayCasting.jar           # Executable JAR for the game
-├── TextureEditor.jar        # Executable JAR for texture editor
+├── RayCasting.jar           # Executable JAR for the game (~63 KB)
+├── TextureEditor.jar        # Executable JAR for texture editor (~63 KB)
 ├── RayCasting.app/          # macOS app bundle for the game
 ├── TextureEditor.app/       # macOS app bundle for texture editor
+├── RayCasting.icns          # Custom icon for game
+├── TextureEditor.icns       # Custom icon for texture editor
+├── build.sh                 # Build script for creating JARs and apps
+├── entitlements.plist       # macOS entitlements for accessibility
 ├── resources/
 │   ├── 3DPoints/
 │   │   ├── tree.txt         # Tree point cloud data
@@ -120,8 +181,17 @@ Ray-Casting/
     ├── PointsFile.java      # Point cloud data structure
     ├── TextureEditor.java   # Texture editing tool
     ├── Vector2D.java        # 2D vector math
-    └── Vector3D.java        # 3D vector math
+    ├── Vector3D.java        # 3D vector math
+    ├── manifest-raycasting.txt      # JAR manifest for game
+    └── manifest-textureeditor.txt   # JAR manifest for editor
 ```
+
+## Additional Documentation
+
+- **QUICK_START.md** - Quick reference guide
+- **CURSOR_FIX_INSTRUCTIONS.md** - Detailed permission setup guide
+- **BUILD_SUMMARY.md** - Technical details about the build process
+- **FINAL_BUILD_SUMMARY.md** - Complete overview of fixes and improvements
 
 ## Screenshots
 
