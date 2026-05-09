@@ -427,55 +427,50 @@ public class Texture {
 
     // ===== FILE LOADER =====
     private void loadFromFile(String name) {
-        try {
-            // Try relative path from source directory first
-            File file = new File("../../resources/SavedTextures/" + name + ".txt");
-            if(!file.exists()) {
-                // Try local resources directory when running from JAR
-                file = new File("resources/SavedTextures/" + name + ".txt");
-                if(!file.exists()) {
-                    // For app bundle, get JAR location and look for resources relative to it
-                    String jarPath = Texture.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-                    File jarFile = new File(jarPath);
-                    File jarDir = jarFile.getParentFile();
-                    file = new File(jarDir, "resources/SavedTextures/" + name + ".txt");
-                    
-                    if(!file.exists()) {
-                        // Try to extract from JAR resources
-                        extractResourceFromJar("resources/SavedTextures/" + name + ".txt");
-                        file = new File("resources/SavedTextures/" + name + ".txt");
+        String fileLoc = "resources/SavedTextures/" + name + ".txt";
+        java.io.InputStream is = null;
+        
+        // Method 1: Try to load from JAR resources (primary)
+        is = getClass().getClassLoader().getResourceAsStream(fileLoc);
+        
+        // Method 2: Try filesystem paths (development fallback)
+        if(is == null) {
+            try {
+                // Try relative path from source directory first
+                File f = new File("../../" + fileLoc);
+                if(f.exists()) {
+                    is = new java.io.FileInputStream(f);
+                } else {
+                    // Try local resources directory
+                    f = new File(fileLoc);
+                    if(f.exists()) {
+                        is = new java.io.FileInputStream(f);
+                    } else {
+                        // For app bundle, get JAR location and look relative to it
+                        String jarPath = Texture.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                        File jarFile = new File(jarPath);
+                        File jarDir = jarFile.getParentFile();
+                        f = new File(jarDir, fileLoc);
+                        if(f.exists()) {
+                            is = new java.io.FileInputStream(f);
+                        }
                     }
                 }
-            }
-            Scanner in = new Scanner(file);
-            for (int i = 0; i < pixels.length; i++) {
-                pixels[i] = in.nextInt();
-            }
-            in.close();
-        } catch (IOException ignored) {}
-    }
-    
-    private void extractResourceFromJar(String resourcePath) {
-        try {
-            // Try with resources/ prefix first
-            java.io.InputStream in = getClass().getClassLoader().getResourceAsStream("resources/" + resourcePath);
-            if(in == null) {
-                // Try without prefix
-                in = getClass().getClassLoader().getResourceAsStream(resourcePath);
-            }
-            if(in != null) {
-                java.io.File outFile = new java.io.File(resourcePath);
-                outFile.getParentFile().mkdirs();
-                java.io.FileOutputStream out = new java.io.FileOutputStream(outFile);
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while((bytesRead = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, bytesRead);
+            } catch(Exception ignored) {}
+        }
+        
+        // Read from InputStream
+        if(is != null) {
+            try {
+                Scanner in = new Scanner(is);
+                for (int i = 0; i < pixels.length; i++) {
+                    if(in.hasNextInt()) {
+                        pixels[i] = in.nextInt();
+                    }
                 }
                 in.close();
-                out.close();
-            }
-        } catch(Exception ignored) {}
+            } catch (Exception ignored) {}
+        }
     }
 
     // ===== UTILS =====

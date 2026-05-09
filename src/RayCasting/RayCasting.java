@@ -131,51 +131,48 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
         height = 600;
         //set starting frame
         frame = 0;
-        //Create 3D Points files only if they don't already exist
         
-        // Try relative path from source directory first
+        // Set folder for development mode (when resources exist on filesystem)
+        // This is only used as a fallback in readFile() method
         File testFolder = new File("../../resources/3DPoints");
         if(testFolder.exists()) {
             folder = testFolder;
         } else {
-            // Use local resources directory when running from JAR
             testFolder = new File("resources/3DPoints");
             if(testFolder.exists()) {
                 folder = testFolder;
             } else {
-                // For app bundle, resources are in Contents/app/resources
-                // Get the jar location and look for resources relative to it
+                // For app bundle, get JAR location
                 String jarPath = RayCasting.class.getProtectionDomain().getCodeSource().getLocation().getPath();
                 File jarFile = new File(jarPath);
                 File jarDir = jarFile.getParentFile();
-                
-                // Resources should be in same directory as JAR
-                testFolder = new File(jarDir, "resources/3DPoints");
-                if(!testFolder.exists()) {
-                    testFolder.mkdirs();
-                }
-                folder = testFolder;
+                folder = new File(jarDir, "resources/3DPoints");
             }
         }
-        if(!new File(folder, "tree.txt").exists() || !new File(folder, "spiral.txt").exists())
-        {
-            // Try to extract from JAR resources first
-            boolean extracted = extractResourceFromJar("resources/3DPoints/tree.txt") && 
-                               extractResourceFromJar("resources/3DPoints/spiral.txt");
-            
-            if(!extracted) {
-                // If extraction failed, generate the files
-                File[] filelist = folder.listFiles();
-                if(filelist == null)
-                    filelist = new File[0];
-                for (File file : filelist)
-                    file.delete();
-                new CreatePoints(folder.getPath());
-            }
-        }
+        
+        // Try to read files from JAR first, filesystem second
+        // If neither works, generate them
         files = new ArrayList<>();
-        readFile("tree.txt");
-        readFile("spiral.txt");
+        try {
+            readFile("tree.txt");
+            readFile("spiral.txt");
+        } catch(Exception e) {
+            // If reading failed, try to generate the files
+            if(!folder.exists()) {
+                folder.mkdirs();
+            }
+            File[] filelist = folder.listFiles();
+            if(filelist == null)
+                filelist = new File[0];
+            for (File file : filelist)
+                file.delete();
+            new CreatePoints(folder.getPath());
+            
+            // Try reading again after generation
+            files.clear();
+            readFile("tree.txt");
+            readFile("spiral.txt");
+        }
         //Add structures made of points
         ArrayList<ArrayList<Vector3D>> points = new ArrayList<>();
         for(int i = 0; i < files.size(); i++)
@@ -444,23 +441,89 @@ public class RayCasting extends JFrame implements Runnable, KeyListener
 
     public void readFile(String loc) throws IOException
     {
-        Scanner file = new Scanner(new File(folder + "/" + loc));
-        int ctr = 0;
-        while(file.hasNextLine())
-        {
-            file.nextLine();
-            ctr++;
+        String fileLoc = "resources/3DPoints/" + loc;
+        java.io.InputStream is = null;
+        
+        // Method 1: Try to load from JAR resources (primary)
+        is = getClass().getClassLoader().getResourceAsStream(fileLoc);
+        
+        // Method 2: Try filesystem paths (development fallback)
+        if(is == null) {
+            try {
+                // Try relative path from source directory first
+                File f = new File(folder, loc);
+                if(f.exists()) {
+                    is = new java.io.FileInputStream(f);
+                } else {
+                    // Try local resources directory
+                    f = new File(fileLoc);
+                    if(f.exists()) {
+                        is = new java.io.FileInputStream(f);
+                    } else {
+                        // For app bundle, get JAR location and look relative to it
+                        String jarPath = RayCasting.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                        File jarFile = new File(jarPath);
+                        File jarDir = jarFile.getParentFile();
+                        f = new File(jarDir, fileLoc);
+                        if(f.exists()) {
+                            is = new java.io.FileInputStream(f);
+                        }
+                    }
+                }
+            } catch(Exception ignored) {}
         }
-        files.add(new PointsFile(ctr));
-        file = new Scanner(new File(folder + "/" + loc));
-        ctr = 0;
-        while(file.hasNextDouble())
-        {
-            files.getLast().x[ctr] = file.nextDouble();
-            files.getLast().y[ctr] = file.nextDouble();
-            files.getLast().z[ctr] = file.nextDouble();
-            files.getLast().color[ctr] = file.nextInt();
-            ctr++;
+        
+        // Method 3: Extract from JAR as last resort (only if Methods 1 and 2 fail)
+        if(is == null) {
+            if(extractResourceFromJar(fileLoc)) {
+                try {
+                    is = new java.io.FileInputStream(new File(fileLoc));
+                } catch(Exception ignored) {}
+            }
+        }
+        
+        // Read from InputStream
+        if(is != null) {
+            Scanner file = new Scanner(is);
+            int ctr = 0;
+            while(file.hasNextLine())
+            {
+                file.nextLine();
+                ctr++;
+            }
+            file.close();
+            
+            // Re-open to read data
+            is = getClass().getClassLoader().getResourceAsStream(fileLoc);
+            if(is == null) {
+                // Fallback to filesystem
+                try {
+                    File f = new File(folder, loc);
+                    if(f.exists()) {
+                        is = new java.io.FileInputStream(f);
+                    } else {
+                        f = new File(fileLoc);
+                        if(f.exists()) {
+                            is = new java.io.FileInputStream(f);
+                        }
+                    }
+                } catch(Exception ignored) {}
+            }
+            
+            if(is != null) {
+                files.add(new PointsFile(ctr));
+                file = new Scanner(is);
+                ctr = 0;
+                while(file.hasNextDouble())
+                {
+                    files.getLast().x[ctr] = file.nextDouble();
+                    files.getLast().y[ctr] = file.nextDouble();
+                    files.getLast().z[ctr] = file.nextDouble();
+                    files.getLast().color[ctr] = file.nextInt();
+                    ctr++;
+                }
+                file.close();
+            }
         }
     }
 
